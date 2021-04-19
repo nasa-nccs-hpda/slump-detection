@@ -1,5 +1,4 @@
 FROM nvidia/cuda:11.2.2-devel-ubi7
-
 #FROM nvidia/cuda:10.1-cudnn7-devel
 
 ENV DEBIAN_FRONTEND noninteractive
