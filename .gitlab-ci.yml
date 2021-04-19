@@ -1,0 +1,25 @@
+#---------------------------------------------------------------------------------------
+# Pipeline description: Build and publish slump detection containers.
+# Author: Jordan A. Caraballo-Vega, GSFC ETD, 587.0
+# Maintainer: Jordan A. Caraballo-Vega, GSFC ETD, 587.0
+#---------------------------------------------------------------------------------------
+stages:
+  - build_detectron2
+
+build_centos7:
+  stage: build_detectron2
+  tags:
+    - build
+    - push
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - >
+      /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/requirements/Dockerfile
+      --destination $CI_REGISTRY/slump-detection/detectron2:latest
+  only:
+    changes:
+    - requirements/Dockerfile
