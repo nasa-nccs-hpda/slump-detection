@@ -1,0 +1,16 @@
+opencv-python
+scikit-image
+tifffile
+seaborn
+scipy
+Pillow
+imagecodecs
+rasterio
+dask-image
+imageio
+xarray
+numpy
+pandas
+tensorboard
+cmake
+cython
