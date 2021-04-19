@@ -18,8 +18,8 @@ build_centos7:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - >
-      /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/requirements/Dockerfile
-      --destination $CI_REGISTRY/slump-detection/detectron2:latest
+      /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/requirements/Dockerfile 
+      --destination $CI_REGISTRY/slump-detection/detectron2/cuda112:latest
   only:
     changes:
     - requirements/Dockerfile
