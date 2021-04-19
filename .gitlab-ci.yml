@@ -6,7 +6,7 @@
 stages:
   - build_detectron2
 
-build_centos7:
+build_detectron:
   stage: build_detectron2
   tags:
     - build
@@ -19,7 +19,8 @@ build_centos7:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - >
       /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/requirements/Dockerfile 
-      --destination $CI_REGISTRY/slump-detection/detectron2/cuda112:latest
-  only:
-    changes:
-    - requirements/Dockerfile
+      --destination $CI_REGISTRY/detectron2/base/cuda112:latest
+
+  #only:
+  #  changes:
+  #  - requirements/Dockerfile
