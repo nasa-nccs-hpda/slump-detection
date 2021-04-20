@@ -16,6 +16,8 @@ import matplotlib.pyplot as plt
 from detectron2.utils.logger import setup_logger
 setup_logger()
 
+os.environ['CUDA_VISIBLE_DEVICES'] = "0,1,2,3"
+
 # import some common detectron2 utilities
 from detectron2 import model_zoo
 from detectron2.engine import DefaultTrainer
