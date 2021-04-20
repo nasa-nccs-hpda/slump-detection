@@ -7,6 +7,12 @@ Slump Detection as an instance segmentation problem.
 ```bash
 ```
 
+## Starting Container
+
+```bash
+singularity shell --nv -B /gpfsm/ccds01/nobackup/temp/jacaraba:/gpfsm/ccds01/nobackup/temp/jacaraba,/att/nobackup/jacaraba:/att/nobackup/jacaraba /gpfsm/ccds01/nobackup/temp/jacaraba/slump-detection/requirements/slump-detectron2_latest.sif
+```
+
 ## Clip Data to Match Labels
 
 ```bash
