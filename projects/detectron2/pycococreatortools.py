@@ -26,7 +26,7 @@ def binary_mask_to_rle(binary_mask):
     counts = rle.get('counts')
     for i, (value, elements) in enumerate(groupby(binary_mask.ravel(order='F'))):
         if i == 0 and value == 1:
-                counts.append(0)
+            counts.append(0)
         counts.append(len(list(elements)))
 
     return rle

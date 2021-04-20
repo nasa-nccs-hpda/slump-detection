@@ -23,3 +23,4 @@ python gen_dataset.py -l ../../data/trialrun_label.tif -i ../../data/trialrun_da
 [ ] get tiles
 [ ] convert to png in directory format
 
+docker build .
