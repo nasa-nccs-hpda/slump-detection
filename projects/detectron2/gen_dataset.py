@@ -65,6 +65,9 @@ def run(config):
         gen_data_png(
             image, image_data, label_data, config, set='test'
         )
+        gen_data_png(
+            image, image_data, label_data, config, set='val'
+        )
 
 
 if __name__ == "__main__":
@@ -89,6 +92,7 @@ if __name__ == "__main__":
         'tile_size': 256,
         'n_tiles_train': 75,
         'n_tiles_test': 25,
+        'n_tiles_val': 25,
         'n_true_pixels': 0,
         'out_dir': '../../data'
     }

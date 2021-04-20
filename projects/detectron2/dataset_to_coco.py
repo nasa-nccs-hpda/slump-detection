@@ -5,18 +5,17 @@ import glob
 import json
 import numpy as np
 from PIL import Image
-import pycococreatortools
+from core import pycococreatortools
 
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
 __email__ = "jordan.a.caraballo-vega@nasa.gov"
 __status__ = "Development"
 
 
-def run():
+def run(inputType='train'):  # 'train', 'test', val
 
-    inputType = 'test'  # 'train', 'test'
     dataDir = '../../data'
-    jsonOut = f'slump-detection_trialrun_{inputType}.json'
+    jsonOut = f'../../data/slump-detection_trialrun_{inputType}.json'
 
     inputTypeDir = os.path.join(dataDir, inputType)
     tmpDir = os.path.join(
@@ -115,4 +114,6 @@ def run():
 
 if __name__ == "__main__":
 
-    run()
+    run(inputType='train')
+    run(inputType='test')
+    run(inputType='val')

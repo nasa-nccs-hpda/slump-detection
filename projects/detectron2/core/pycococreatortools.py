@@ -1,5 +1,4 @@
 #Downloaded from: https://github.com/waspinator/pycococreator/blob/master/pycococreatortools/pycococreatortools.py
-import os
 import re
 import datetime
 import numpy as np
