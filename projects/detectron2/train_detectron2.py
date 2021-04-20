@@ -25,27 +25,30 @@ inDir = "../../data"
 outDir = "../../data/output"
 tmpDir = "../../data/tmp"
 
-flight = 'OR_20190630_Three_Creek'
-dsetName = flight + "_train"
+# flight = 'OR_20190630_Three_Creek'
+# dsetName = flight + "_train"
+dsetName = "slump_detection_dataset"
 
 train_dataset = "slump-detection_trialrun_train.json"
 
-"""
+#print(os.path.join(inDir, train_dataset))
+#print(os.path.join(inDir, "train"))
+#print(os.path.join("config", "cascade_mask_rcnn_R_50_FPN_3x.yaml"))
+
+
 register_coco_instances(
-    "slump_detection_dataset", {},
-    train_dataset, "./stage1_train"
-)  # register_coco_dataset
+    dsetName, {}, os.path.join(inDir, train_dataset), 
+    os.path.join(inDir, "train")
+)
 
-
-
-register_coco_instances(dsetName, {}, os.path.join(inDir,dsetName+'.json'),os.path.join(inDir, "datasets",flight,"train"))
 metadata = MetadataCatalog.get(dsetName)
 dataset_dicts = DatasetCatalog.get(dsetName)
 
+# use cascade_mask_rcnn_R50_FPN for training model config
 cfg = get_cfg()
-cfg.merge_from_file(os.path.join(baseDir,"model","cascade_mask_rcnn_R_50_FPN_3x.yaml"))  # use cascade_mask_rcnn_R50_FPN for trainging model config
-cfg.OUTPUT_DIR = os.path.join(outDir,"cascade")  # output weight directroy path
-cfg.MODEL.WEIGHTS = os.path.join(outDir,"cascade","model_0004999.pth")  #  the path for weight save 
+cfg.merge_from_file(os.path.join("config", "slump_mask_rcnn_R_50_FPN_3x.yaml"))
+cfg.OUTPUT_DIR = os.path.join(outDir, "cascade")  # output weight directroy path
+cfg.MODEL.WEIGHTS = os.path.join(outDir, "cascade", "model_0004999.pth")  #  the path for weight save 
 cfg.DATASETS.TRAIN = (dsetName,)  # use training data
 cfg.DATALOADER.NUM_WORKERS = 2
 cfg.SOLVER.IMS_PER_BATCH = 2
@@ -56,7 +59,7 @@ cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5 
 cfg.DATASETS.TEST = (dsetName)
 predictor = DefaultPredictor(cfg)
-"""
+
 
 """
 toTest = "/att/gpfsfs/briskfs01/ppl/acartas/git/forest.health/input/datasets/OR_20190630_Three_Creek/test/c3r2_c5r12/images/OR_20190630_Three_Creek_c3r2_c5r12.png"
