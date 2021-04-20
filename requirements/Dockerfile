@@ -24,7 +24,7 @@ RUN ln -sv /usr/bin/python3 /usr/bin/python && \
 # See https://pytorch.org/ for other options if you use a different version of CUDA
 COPY requirements.txt ./
 
-RUN pip install -y -r requirements.txt && \
+RUN pip install -r requirements.txt && \
     pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html && \
     pip install 'git+https://github.com/facebookresearch/fvcore' && \
     pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
