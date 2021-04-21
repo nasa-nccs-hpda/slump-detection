@@ -61,7 +61,7 @@ cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
 )
 cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.0025
-cfg.SOLVER.MAX_ITER = 10
+cfg.SOLVER.MAX_ITER = 300
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128
 cfg.INPUT.MIN_SIZE_TRAIN = (256,)
 cfg.INPUT.MAX_SIZE_TRAIN = (256,)
@@ -112,7 +112,7 @@ metadata = MetadataCatalog.get(dsetName + '_test')
 dataset_dicts = DatasetCatalog.get(dsetName + '_test')
 #cfg.DATASETS.TEST = (dsetName + '_test')
 
-inLrg = '../../data/test/trialrun_data_d_17.png'
+inLrg = '../../data/test/trialrun_data_d_20.png'
 
 #for d in random.sample(dataset_dicts, 3):
 #    im = cv2.imread(d["file_name"])
