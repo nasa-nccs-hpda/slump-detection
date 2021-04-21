@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from detectron2.utils.logger import setup_logger
 setup_logger()
 
-os.environ['CUDA_VISIBLE_DEVICES'] = "0,1,2,3"
+os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 
 # import some common detectron2 utilities
 from detectron2 import model_zoo
@@ -35,7 +35,7 @@ outDir = "../../data/output"
 tmpDir = "../../data/tmp"
 
 # Basic config stuff during dev
-doDeleteModel = False
+doDeleteModel = True
 dsetName = "slump-detection_trialrun"
 
 # Registor COCO datasets for train, val, and test
@@ -53,7 +53,8 @@ cfg.merge_from_file(
 )
 cfg.DATASETS.TRAIN = (dsetName + '_train')
 cfg.DATASETS.VAL = (dsetName + '_val')
-cfg.DATASETS.TEST = ()  # no metrics implemented for this dataset
+cfg.DATASETS.TEST = ()
+
 cfg.DATALOADER.NUM_WORKERS = 4
 cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
     "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"
@@ -62,7 +63,14 @@ cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.0025
 cfg.SOLVER.MAX_ITER = 10
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128
+cfg.INPUT.MIN_SIZE_TRAIN = (256,)
+cfg.INPUT.MAX_SIZE_TRAIN = (256,)
+#cfg.INPUT.MIN_SIZE_TEST = (256,)
+#cfg.INPUT.MAX_SIZE_TEST = (256,)
+#cfg.INPUT.RANDOM_FLIP = "vertical"
+
 cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
+cfg.MODEL.MASK_ON = True
 cfg.OUTPUT_DIR = outDir
 cfg.DATALOADER.FILTER_EMPTY_ANNOTATIONS = False  # ignore or use empty labeled images
 
@@ -72,6 +80,7 @@ finalModelPath = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 
 if os.path.isfile(finalModelPath) and doDeleteModel:
     os.remove(finalModelPath)
+    print("WARNING: deleted existing model, re-training")
 
 if not os.path.isfile(finalModelPath): #don't rerun training unless I cleared the old one
     trainer = DefaultTrainer(cfg) 
@@ -85,9 +94,54 @@ if not os.path.isfile(finalModelPath): #don't rerun training unless I cleared th
 # First, let's create a predictor using the model we just trained
 # Inference should use the config with parameters that are used in training
 # Changes for inference:
+
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.75   # set a custom threshold
+"""
+from detectron2.modeling import build_model
+from detectron2.checkpoint import DetectionCheckpointer
+
+model = build_model(cfg)
+#print(model)
+DetectionCheckpointer(model).load(cfg.MODEL.WEIGHTS)
+print(model.eval())
+#model.eval()
+"""
 predictor = DefaultPredictor(cfg)
+metadata = MetadataCatalog.get(dsetName + '_test')
+dataset_dicts = DatasetCatalog.get(dsetName + '_test')
+#cfg.DATASETS.TEST = (dsetName + '_test')
+
+inLrg = '../../data/test/trialrun_data_d_17.png'
+
+#for d in random.sample(dataset_dicts, 3):
+#    im = cv2.imread(d["file_name"])
+#    outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+#    v = Visualizer(
+#            im[:, :, ::-1],
+#            metadata=metadata, scale=0.5,
+#            instance_mode=ColorMode.IMAGE_BW  # remove the colors of unsegmented pixels. This option is only available for segmentation models
+#    )
+#    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+#    #cv2_imshow(out.get_image()[:, :, ::-1])
+#    cv2.imwrite(fileOut,out.get_image()[:, :, ::-1])
+
+im = cv2.imread(inLrg)
+print(im.shape)
+#print(type(im))
+outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+v = Visualizer(
+        im[:, :, ::-1],
+        metadata=metadata,
+        scale=1,
+        #instance_mode=ColorMode.IMAGE_BW   # remove the colors of unsegmented pixels. This option is only available for segmentation models
+)
+out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+predictFileName = os.path.basename('predict.png')
+fileOut = os.path.join(outDir,predictFileName)
+
+cv2.imwrite(fileOut,out.get_image()[:, :, ::-1])
+
 
 """
 #When watching it run:
