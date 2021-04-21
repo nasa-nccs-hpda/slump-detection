@@ -3,7 +3,8 @@
 # --------------------------------------------------------------------------
 import argparse
 import xarray as xr
-from skimage import img_as_ubyte
+import numpy as np
+# from skimage import img_as_ubyte
 from core.utils import get_bands, gen_data_png
 
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
@@ -53,7 +54,11 @@ def run(config):
         print("Image after get_bands: ", image_data.shape, label_data.shape)
 
         # lower resolution here
-        image_data = img_as_ubyte(image_data)
+        #from skimage.util import img_as_ubyte
+        #from skimage import exposure
+        #image_data = exposure.rescale_intensity(image_data, out_range=(0, 2**31 - 1))
+        #print(image_data)
+        #image_data = img_as_ubyte(image_data)
 
         # transforming 1 to 255 for now to visualize locally
         label_data[label_data == 1] = 255
@@ -88,7 +93,7 @@ if __name__ == "__main__":
             'CoastalBlue', 'Blue', 'Green', 'Yellow', 'Red',
             'RedEdge', 'NIR1', 'NIR2'
         ],
-        'output_bands': ['Blue', 'Green', 'Red'],
+        'output_bands': ['Red', 'Green', 'Blue'],
         'tile_size': 256,
         'n_tiles_train': 75,
         'n_tiles_test': 25,
