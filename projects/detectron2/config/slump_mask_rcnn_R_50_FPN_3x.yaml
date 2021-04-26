@@ -7,10 +7,10 @@
 #    ],
 #    'output_bands': ['Red', 'Green', 'Blue'],
 INPUT:
-  MAX_SIZE_TRAIN: (256,)
-  MAX_SIZE_TEST: (256,)
-  MIN_SIZE_TRAIN: (256,)
-  MIN_SIZE_TEST: (256,)
+  MAX_SIZE_TRAIN: 256
+  MAX_SIZE_TEST: 256
+  MIN_SIZE_TRAIN: 256
+  MIN_SIZE_TEST: 256
 MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   MASK_ON: True
@@ -69,26 +69,26 @@ VERSION: 2
 
 
 
-MODEL:
-  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
-  MASK_ON: True
-  RESNETS:
-    DEPTH: 50
-  ROI_HEADS:
-    NAME: "CascadeROIHeads"
-    BATCH_SIZE_PER_IMAGE: 128
-    NUM_CLASSES: 1
-  ROI_BOX_HEAD:
-    CLS_AGNOSTIC_BBOX_REG: True
-  RPN:
-    POST_NMS_TOPK_TRAIN: 2000
-SOLVER:
-  IMS_PER_BATCH: 6
-  STEPS: (210000, 250000)
-  MAX_ITER: 270000
-INPUT:
-  MIN_SIZE_TRAIN: 256
-  MAX_SIZE_TRAIN: 256
-  MIN_SIZE_TEST: 256
-  MAX_SIZE_TEST: 256
-  RANDOM_FLIP: "vertical"
+#MODEL:
+#  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+#  MASK_ON: True
+#  RESNETS:
+#    DEPTH: 50
+#  ROI_HEADS:
+#    NAME: "CascadeROIHeads"
+#    BATCH_SIZE_PER_IMAGE: 128
+#    NUM_CLASSES: 1
+#  ROI_BOX_HEAD:
+#    CLS_AGNOSTIC_BBOX_REG: True
+#  RPN:
+#    POST_NMS_TOPK_TRAIN: 2000
+#SOLVER:
+#  IMS_PER_BATCH: 6
+#  STEPS: (210000, 250000)
+#  MAX_ITER: 270000
+#INPUT:
+#  MIN_SIZE_TRAIN: 256
+#  MAX_SIZE_TRAIN: 256
+#  MIN_SIZE_TEST: 256
+#  MAX_SIZE_TEST: 256
+#  RANDOM_FLIP: "vertical"
