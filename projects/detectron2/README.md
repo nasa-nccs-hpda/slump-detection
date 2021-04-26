@@ -4,15 +4,13 @@ Using the detectron2 framework for the task of instance segmentation.
 
 ## Table of Contents
 
-1. [Logging-In](#Logging_In)
-2. [Container Environment Installation](#Container_Environment_Installation)
+1. [Expected Input Data](#Expected_Input_Data)
+2. [Configuration File](#Container_Environment_Installation)
 3. [Working Inside a Container](#Working_Inside_Container)
 4. [Authors](#Authors)
 5. [References](#References)
 
-## How-To
-
-### Expected Input Data
+## Expected Input Data
 
 The following scripts expect data in GeoTIF format. There should be a file with raw data, preferebly TOA corrected, and a file with
 labels or the mask to map with. The expected data file can have anywhere from 3 to N number of channels/bands, while the mask file should
@@ -42,7 +40,7 @@ Where:
 * ntiles_val: number of validation tiles to extract from the data file
 * ymin,ymax,xmin,xmax: values to exclude from training dataset to include in validation tiles
 
-### Configuration File
+## Configuration File
 
 ### Preprocess
 

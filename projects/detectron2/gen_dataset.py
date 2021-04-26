@@ -4,8 +4,10 @@
 import argparse
 import xarray as xr
 import numpy as np
+from detectron2.config import get_cfg
 # from skimage import img_as_ubyte
 from core.utils import get_bands, gen_data_png
+
 
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
 __email__ = "jordan.a.caraballo-vega@nasa.gov"
@@ -54,11 +56,11 @@ def run(config):
         print("Image after get_bands: ", image_data.shape, label_data.shape)
 
         # lower resolution here
-        #from skimage.util import img_as_ubyte
-        #from skimage import exposure
-        #image_data = exposure.rescale_intensity(image_data, out_range=(0, 2**31 - 1))
-        #print(image_data)
-        #image_data = img_as_ubyte(image_data)
+        # from skimage.util import img_as_ubyte
+        # from skimage import exposure
+        # image_data = exposure.rescale_intensity(image_data, out_range=(0, 2**31 - 1))
+        # print(image_data)
+        # image_data = img_as_ubyte(image_data)
 
         # transforming 1 to 255 for now to visualize locally
         label_data[label_data == 1] = 255
@@ -82,6 +84,16 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------
     args = arg_parser()
 
+    # Setup configurations
+    cfg = get_cfg()
+    cfg.merge_from_file("config/mask_rcnn_R_50_FPN_3x.yaml")
+    
+    #    model_zoo.get_config_file(
+    #        "config/mask_rcnn_R_50_FPN_3x.yaml"
+    #    )
+    #)
+
+    """
     config = {
         'images': [
             '../../data/trialrun_data.tif'
@@ -103,3 +115,4 @@ if __name__ == "__main__":
     }
 
     run(config)
+    """
