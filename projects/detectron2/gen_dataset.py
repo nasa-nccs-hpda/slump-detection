@@ -4,7 +4,7 @@
 import argparse
 import xarray as xr
 import numpy as np
-from detectron2.config import get_cfg
+from detectron2.config import get_cfg, CfgNode
 # from skimage import img_as_ubyte
 from core.utils import get_bands, gen_data_png
 
@@ -86,7 +86,11 @@ if __name__ == "__main__":
 
     # Setup configurations
     cfg = get_cfg()
+    #cfg = CfgNode(new_allowed=True)
+    cfg.set_new_allowed(True)
     cfg.merge_from_file("config/slump_mask_rcnn_R_50_FPN_3x.yaml")
+
+    print(cfg.INPUT)
 
     #    model_zoo.get_config_file(
     #        "config/mask_rcnn_R_50_FPN_3x.yaml"
