@@ -86,8 +86,8 @@ if __name__ == "__main__":
 
     # Setup configurations
     cfg = get_cfg()
-    cfg.merge_from_file("config/mask_rcnn_R_50_FPN_3x.yaml")
-    
+    cfg.merge_from_file("config/slump_mask_rcnn_R_50_FPN_3x.yaml")
+
     #    model_zoo.get_config_file(
     #        "config/mask_rcnn_R_50_FPN_3x.yaml"
     #    )
