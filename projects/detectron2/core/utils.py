@@ -4,6 +4,7 @@
 import os                            # for os utilities
 import sys                           # for os utilities
 from tqdm import tqdm                # for progress bar
+import argparse                      # for arguments parsing
 import datetime                      # for dates manipulation
 import glob                          # for local files manipulation
 import json                          # for json handling
@@ -16,6 +17,18 @@ from PIL import Image                # for managing images
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
 __email__ = "jordan.a.caraballo-vega@nasa.gov"
 __status__ = "Production"
+
+
+def arg_parser():
+    """
+    Argparser function
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-c', action='store', dest='config_filename', type=str,
+        help='configuration filename', required=True
+    )
+    return parser.parse_args()
 
 
 def get_bands(data, input_bands, output_bands, drop_bands=[]):
@@ -88,7 +101,8 @@ def gen_coco_dataset(
     """
     data_dir = cfg.DATASET.OUTPUT_DIRECTORY  # root directory
     input_dir = os.path.join(data_dir, set)  # directory where images reside
-    json_out = f'{data_dir}/{cfg.DATASET.DESCRIPTION}_{set}.json'  # output
+    dataset_name = cfg.DATASET.COCO_METADATA.DESCRIPTION
+    json_out = f'{data_dir}/{dataset_name}_{set}.json'  # output
 
     if not os.path.isfile(json_out):
 
@@ -143,7 +157,7 @@ def gen_coco_dataset(
             if annotationInfo is not None:
                 annotations.append(annotationInfo)
             else:
-                print('\t\tNo annotationInfo found for: ' + curMaskName)
+                print('\tNo annotationInfo found for: ' + curMaskName)
 
         coco_info = {
             "info": INFO,

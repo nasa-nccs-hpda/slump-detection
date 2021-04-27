@@ -2,10 +2,10 @@
 # Extract dataset tiles from label and imagery rasters.
 # --------------------------------------------------------------------------
 import warnings
-import argparse
 import xarray as xr
 from detectron2.config import get_cfg
 # from skimage import img_as_ubyte
+from core.utils import arg_parser
 from core.utils import get_bands, gen_data_png, gen_coco_dataset
 
 import numpy as np
@@ -15,18 +15,6 @@ warnings.filterwarnings("ignore")
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
 __email__ = "jordan.a.caraballo-vega@nasa.gov"
 __status__ = "Production"
-
-
-def arg_parser():
-    """
-    Argparser function
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-c', action='store', dest='config_filename', type=str,
-        help='configuration filename', required=True
-    )
-    return parser.parse_args()
 
 
 def run(cfg):
@@ -51,7 +39,8 @@ def run(cfg):
         # lower resolution here
         # from skimage.util import img_as_ubyte
         # from skimage import exposure
-        # image_data = exposure.rescale_intensity(image_data, out_range=(0, 2**31 - 1))
+        # image_data = exposure.rescale_intensity(
+        #   image_data, out_range=(0, 2**31 - 1))
         # print(image_data)
         # image_data = img_as_ubyte(image_data)
 

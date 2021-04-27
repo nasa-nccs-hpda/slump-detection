@@ -20,7 +20,6 @@ INPUT:
   MAX_SIZE_TEST: 256
   RANDOM_FLIP: "vertical"
 DATASET:
-  DESCRIPTION: slump-detection_trialrun
   IMAGES:
     - '../../data/trialrun_data.tif'
   LABELS:
@@ -30,9 +29,10 @@ DATASET:
   NUM_VAL_TILES: 25
   NUM_TRUE_PIXELS: 0
   OUTPUT_DIRECTORY: '../../data'
-  TRAIN_DATASET_NAME: ('slump_dataset_train',)
-  TEST_DATASET_NAME: ('slump_dataset_val',)
+  TRAIN: ('slump-detection_trialrun_TRAIN',)
+  VAL: ('slump-detection_trialrun_VAL',)
   COCO_METADATA:
+    DESCRIPTION: slump-detection_trialrun
     INFO:
       description: "Slump Detection in World View VHR Imagery"
       url: "https://www.nccs.nasa.gov"
@@ -50,20 +50,17 @@ DATASET:
     CATEGORY_INFO:
       id: 1
       is_crowd: False
+SOLVER:
+  IMS_PER_BATCH: 16
+  BASE_LR: 0.0025
+  MAX_ITER: 300
 MODEL:
-  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
-  MASK_ON: True
-  RESNETS:
-    DEPTH: 50
   ROI_HEADS:
-    NAME: "CascadeROIHeads"
+    NAME: "StandardROIHeads"
     BATCH_SIZE_PER_IMAGE: 128
     NUM_CLASSES: 1
-  ROI_BOX_HEAD:
-    CLS_AGNOSTIC_BBOX_REG: True
-  RPN:
-    POST_NMS_TOPK_TRAIN: 2000
-SOLVER:
-  IMS_PER_BATCH: 6
-  STEPS: (210000, 250000)
-  MAX_ITER: 270000
+  OUTPUT_DIRECTORY: '../../data/model'
+  MODEL_NAME: 'model_final.pth'
+  DELETE_MODEL: True
+DATALOADER:
+  FILTER_EMPTY_ANNOTATIONS: False

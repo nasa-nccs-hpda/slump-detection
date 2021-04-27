@@ -2,12 +2,16 @@
 # AUTHOR: Jordan A Caraballo-Vega, jordan.a.caraballo-vega@nasa.gov
 DATASETS:
   TRAIN: ('slump_dataset_train',)
-  TEST: ('slump_dataset_val',)
+  VAL: ('slump_dataset_train',)
+  TEST: ()
 MODEL:
+  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+  MASK_ON: True
   META_ARCHITECTURE: "GeneralizedRCNN"
   BACKBONE:
     NAME: "build_resnet_fpn_backbone"
   RESNETS:
+    DEPTH: 50
     OUT_FEATURES: ["res2", "res3", "res4", "res5"]
   FPN:
     IN_FEATURES: ["res2", "res3", "res4", "res5"]
@@ -21,8 +25,8 @@ MODEL:
     # Detectron1 uses 2000 proposals per-batch,
     # (See "modeling/rpn/rpn_outputs.py" for details of this legacy issue)
     # which is approximately 1000 proposals per-image since the default batch size for FPN is 2.
-    POST_NMS_TOPK_TRAIN: 1000
     POST_NMS_TOPK_TEST: 1000
+    POST_NMS_TOPK_TRAIN: 2000
   ROI_HEADS:
     NAME: "StandardROIHeads"
     IN_FEATURES: ["p2", "p3", "p4", "p5"]
@@ -30,6 +34,7 @@ MODEL:
     NAME: "FastRCNNConvFCHead"
     NUM_FC: 2
     POOLER_RESOLUTION: 7
+    CLS_AGNOSTIC_BBOX_REG: True
   ROI_MASK_HEAD:
     NAME: "MaskRCNNConvUpsampleHead"
     NUM_CONV: 4
@@ -37,6 +42,8 @@ MODEL:
 SOLVER:
   IMS_PER_BATCH: 16
   BASE_LR: 0.02
-  STEPS: (60000, 80000)
+  STEPS: (210000, 250000)
   MAX_ITER: 90000
+DATALOADER:
+  NUM_WORKERS: 4
 VERSION: 2

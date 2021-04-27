@@ -103,3 +103,5 @@ python gen_dataset.py -l ../../data/trialrun_label.tif -i ../../data/trialrun_da
 docker build .
 
 ## References
+
+[1] Facebook Research, Detectron2: https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5#scrollTo=HUjkwRsOn1O0
