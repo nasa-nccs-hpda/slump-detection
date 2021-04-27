@@ -39,6 +39,10 @@ DATASET:
       version: "0.1.0"
       year: "2021"
       contributor: "Jordan A. Caraballo-Vega"
+    LICENSES:
+      - > id: 1
+          name: "World View Maxar Agreement",
+          url: "https://www.nccs.nasa.gov"
 MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   MASK_ON: True
