@@ -20,20 +20,8 @@ def arg_parser():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-l', action='store', dest='label_filename', type=str,
-        help='label raster filename'
-    )
-    parser.add_argument(
-        '-i', action='store', dest='image_filename', type=str,
-        help='image raster filename'
-    )
-    parser.add_argument(
-        '-o', action='store', dest='out_dir', type=str,
-        help='output directory to store dataset'
-    )
-    parser.add_argument(
-        '-b', action='store', dest='bands', type=int, nargs='+',
-        help='band indices to save into png file'
+        '-c', action='store', dest='config_filename', type=str,
+        help='configuration filename', required=True
     )
     return parser.parse_args()
 
@@ -84,35 +72,15 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------
     args = arg_parser()
 
-    # Setup configurations
-    cfg = get_cfg()
-    cfg.INPUT.MIN_SIZE_TRAIN = 256
-    cfg.set_new_allowed(True)
-    cfg.defrost()
-    cfg.merge_from_file("config/slump_mask_rcnn_R_50_FPN_3x.yaml")
+    # ---------------------------------------------------------------------------
+    # Initialize configuration object
+    # ---------------------------------------------------------------------------
+    cfg = get_cfg()  # get default configurations in place
+    cfg.set_new_allowed(True)  # allow for new configuration objects
+    cfg.INPUT.MIN_SIZE_TRAIN = 256  # small hack to allow merging new field types
+    cfg.merge_from_file(args.config_filename)  # merge from file
 
-    print(cfg.DATASET.IMAGES[0])
-
-    """
-    config = {
-        'images': [
-            '../../data/trialrun_data.tif'
-        ],
-        'labels': [
-            '../../data/trialrun_label.tif'
-        ],
-        'input_bands': [
-            'CoastalBlue', 'Blue', 'Green', 'Yellow', 'Red',
-            'RedEdge', 'NIR1', 'NIR2'
-        ],
-        'output_bands': ['Red', 'Green', 'Blue'],
-        'tile_size': 256,
-        'n_tiles_train': 75,
-        'n_tiles_test': 25,
-        'n_tiles_val': 25,
-        'n_true_pixels': 0,
-        'out_dir': '../../data'
-    }
-
-    run(config)
-    """
+    # ---------------------------------------------------------------------------
+    # Run the main
+    # ---------------------------------------------------------------------------
+    #run(cfg)
