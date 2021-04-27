@@ -84,12 +84,18 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------
     args = arg_parser()
 
+    from detectron2.config import CfgNode
+
     # Setup configurations
     cfg = get_cfg()
+    cfg.INPUT.MIN_SIZE_TRAIN = 256
     #cfg = CfgNode(new_allowed=True)
     cfg.set_new_allowed(True)
+    cfg.defrost()
     cfg.merge_from_file("config/slump_mask_rcnn_R_50_FPN_3x.yaml")
-
+    #cfg1 = CfgNode.load_yaml_with_base("config/slump_mask_rcnn_R_50_FPN_3x.yaml")
+    #cfg.merge_from_list(cfg1)
+    #cfg.update(cfg1)
     print(cfg.INPUT)
 
     #    model_zoo.get_config_file(

@@ -1,8 +1,12 @@
 # Main Configuration FIle for Slump Detection Architecture.
 # AUTHOR: Jordan A Caraballo-Vega, jordan.a.caraballo-vega@nasa.gov
-INPUT:
-  MIN_SIZE_TEST: 256
-  MIN_SIZE_TRAIN: (256, 640, 672, 704, 736, 768, 800)
+#INPUT:
+#  MIN_SIZE_TEST: 256
+#  MAX_SIZE_TEST: 256
+#  MIN_SIZE_TRAIN: 256
+#  MAX_SIZE_TRAIN: 256
+  #MIN_SIZE_TRAIN: (256, 640, 672, 704, 736, 768, 800)
+  #MIN_SIZE_TRAIN: (256, 640, 672, 704, 736, 768, 800)
 DATASETS:
   TRAIN: ('slump_dataset_train',)
   TEST: ('slump_dataset_val',)
