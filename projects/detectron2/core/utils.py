@@ -90,7 +90,7 @@ def gen_coco_dataset(
     input_dir = os.path.join(data_dir, set)  # directory where images reside
     json_out = f'{data_dir}/{cfg.DATASET.DESCRIPTION}_{set}.json'  # output
 
-    if not os.path.isfile(jsonOut):
+    if not os.path.isfile(json_out):
 
         # src: https://patrickwasp.com/create-your-own-coco-style-dataset/
         # Define several sections of the COCO Dataset Format
@@ -102,7 +102,7 @@ def gen_coco_dataset(
         # Licenses and categories
         LICENSES = [dict(cfg.DATASET.COCO_METADATA.LICENSES)]
         CATEGORIES = [dict(cfg.DATASET.COCO_METADATA.CATEGORIES)]
-        CATEGORY_INFO = dict(cfg.DATASET.COCO_METADATA.CATEGORY_INFO
+        CATEGORY_INFO = dict(cfg.DATASET.COCO_METADATA.CATEGORY_INFO)
 
         # Retrieve filenames from local storage
         train_names = sorted(glob.glob(f'{input_dir}/{img_reg}'))
@@ -136,7 +136,7 @@ def gen_coco_dataset(
             ).astype(np.uint8)
 
             annotationInfo = pycococreatortools.create_annotation_info(
-                curAnnotationId, curImgId, categoryInfo, binaryMask,
+                curAnnotationId, curImgId, CATEGORY_INFO, binaryMask,
                 curImg.size, tolerance=2
             )
 
@@ -153,7 +153,7 @@ def gen_coco_dataset(
             "annotations": annotations,
         }
 
-        with open(jsonOut, 'w') as f:
-            f.write(json.dumps(cocoInfo))
+        with open(json_out, 'w') as f:
+            f.write(json.dumps(coco_info))
     else:
-        sys.exit(f'{jsonOut} already exists. Please remove it and re-run.')
+        sys.exit(f'{json_out} already exists. Please remove it and re-run.')
