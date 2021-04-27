@@ -1,13 +1,34 @@
 #Src: https://github.com/vbnmzxc9513/Nuclei-detection_detectron2/blob/master/model/cascade_mask_rcnn_R_50_FPN_3x.yaml
 _BASE_: "Base-RCNN-FPN.yaml"
 INPUT:
-  INPUT_BANDS: ['CoastalBlue', 'Blue', 'Green', 'Yellow', 'Red', 'RedEdge', 'NIR1', 'NIR2']
-  OUTPUT_BANDS: ['Red', 'Green', 'Blue']
+  INPUT_BANDS:
+    - 'CoastalBlue'
+    - 'Blue'
+    - 'Green'
+    - 'Yellow'
+    - 'Red'
+    - 'RedEdge'
+    - 'NIR1'
+    - 'NIR2'
+  OUTPUT_BANDS:
+    - 'Red'
+    - 'Green'
+    - 'Blue'
   MIN_SIZE_TRAIN: 256
   MAX_SIZE_TRAIN: 256
   MIN_SIZE_TEST: 256
   MAX_SIZE_TEST: 256
   RANDOM_FLIP: "vertical"
+DATASET:
+  IMAGES:
+    - '../../data/trialrun_data.tif'
+  LABELS:
+    - '../../data/trialrun_label.tif'
+  NUMBER_OF_TRAINING_TILES: 75
+  NUMBER_OF_TEST_TILES: 25
+  NUMBER_OF_VAL_TILES: 25
+  NUMBER_OF_TRUE_PIXELS: 0
+  OUTPUT_DIRECTORY: '../../data'
 MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   MASK_ON: True
