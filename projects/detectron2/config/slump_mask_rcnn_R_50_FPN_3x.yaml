@@ -20,6 +20,7 @@ INPUT:
   MAX_SIZE_TEST: 256
   RANDOM_FLIP: "vertical"
 DATASET:
+  DESCRIPTION: slump-detection_trialrun
   IMAGES:
     - '../../data/trialrun_data.tif'
   LABELS:
@@ -31,6 +32,13 @@ DATASET:
   OUTPUT_DIRECTORY: '../../data'
   TRAIN_DATASET_NAME: ('slump_dataset_train',)
   TEST_DATASET_NAME: ('slump_dataset_val',)
+  COCO_METADATA:
+    INFO:
+      description: "Slump Detection in World View VHR Imagery"
+      url: "https://www.nccs.nasa.gov"
+      version: "0.1.0"
+      year: "2021"
+      contributor: "Jordan A. Caraballo-Vega"
 MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   MASK_ON: True
