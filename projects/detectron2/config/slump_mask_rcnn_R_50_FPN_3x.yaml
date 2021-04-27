@@ -24,10 +24,10 @@ DATASET:
     - '../../data/trialrun_data.tif'
   LABELS:
     - '../../data/trialrun_label.tif'
-  NUMBER_OF_TRAINING_TILES: 75
-  NUMBER_OF_TEST_TILES: 25
-  NUMBER_OF_VAL_TILES: 25
-  NUMBER_OF_TRUE_PIXELS: 0
+  NUM_TRAIN_TILES: 75
+  NUM_TEST_TILES: 25
+  NUM_VAL_TILES: 25
+  NUM_TRUE_PIXELS: 0
   OUTPUT_DIRECTORY: '../../data'
   TRAIN_DATASET_NAME: ('slump_dataset_train',)
   TEST_DATASET_NAME: ('slump_dataset_val',)

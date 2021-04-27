@@ -56,15 +56,9 @@ def run(cfg):
         label_data[label_data == 1] = 255
 
         # extract tiles from the imagery and generate masks
-        gen_data_png(
-            image, image_data, label_data, cfg, set='TRAIN'
-        )
-        gen_data_png(
-            image, image_data, label_data, cfg, set='TEST'
-        )
-        gen_data_png(
-            image, image_data, label_data, cfg, set='VAL'
-        )
+        gen_data_png(image, image_data, label_data, cfg, set='TRAIN')
+        gen_data_png(image, image_data, label_data, cfg, set='TEST')
+        gen_data_png(image, image_data, label_data, cfg, set='VAL')
 
 
 if __name__ == "__main__":

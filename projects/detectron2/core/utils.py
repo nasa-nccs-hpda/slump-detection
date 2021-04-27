@@ -24,30 +24,36 @@ def get_bands(data, input_bands, output_bands, drop_bands=[]):
     return data.drop(dim="band", labels=drop_bands, drop=True)
 
 
-def gen_data_png(fimg, img, label, config, set='train'):
-
-    # set dimensions of the input image array, and get desired tile size
-    y_dim, x_dim, z_dim = img.shape
-    tsz = config.INPUT.MIN_SIZE_TRAIN
-    n_true_pixels = config.DATASET.NUMBER_OF_TRUE_PIXELS
-    fimg = fimg.split('/')[-1][:-4]
-    save_dir = config.DATASET.OUTPUT_DIRECTORY + f'/{set}'
-
-    print(save_dir)
-
+def gen_data_png(fimg, img, label, cfg, set='train'):
     """
-    os.system(f'mkdir -p {save_dir}')
+    Save png images on disk
+    Args:
+        fimg (str): list of input bands
+        img (np array): array with imagery values
+        label (np array): array with labels values
+        cfg (CfgNode obj): configuration object
+        set (str): dataset to prepare
+    """
+    # set dimensions of the input image array, and get desired tile size
+    y_dim, x_dim, z_dim = img.shape  # dimensions of imagery
+    tsz = cfg.INPUT.MIN_SIZE_TRAIN  # tile size to extract from imagery
+
+    n_true_pixels = cfg.DATASET.NUM_TRUE_PIXELS  # num of true pixels per tile
+    fimg = fimg.split('/')[-1][:-4]  # image filename for output
+    save_dir = cfg.DATASET.OUTPUT_DIRECTORY + f'/{set}'  # output directory
+
+    n_tiles = cfg.DATASET[f'NUM_{set}_TILES']  # number of tiles to extract
+    os.system(f'mkdir -p {save_dir}')  # create saving directory
 
     # generate n number of tiles
-    for i in tqdm(range(config[f'n_tiles_{set}'])):
+    for i in tqdm(range(n_tiles)):
 
         # Generate random integers from image
         yc = random.randint(0, y_dim - 2 * tsz)
         xc = random.randint(0, x_dim - 2 * tsz)
 
         # verify data is not on nodata region - maybe later
-        # add data augmentation in this section
-
+        # add additional data augmentation in this section
         while np.count_nonzero(
                     label[yc:(yc + tsz), xc:(xc + tsz)] == 255
                 ) < n_true_pixels:
@@ -58,10 +64,6 @@ def gen_data_png(fimg, img, label, config, set='train'):
         tile_img = img[yc:(yc + tsz), xc:(xc + tsz), :]
         tile_lab = label[yc:(yc + tsz), xc:(xc + tsz)]
 
-        imageio.imwrite(f'{save_dir}/{fimg}_d_{i+1}.png', tile_img)
-        imageio.imwrite(f'{save_dir}/{fimg}_l_{i+1}.png', tile_lab)
-
-        #os.system(f'mkdir -p {save_dir}/{fimg}_d_{i}/images {save_dir}/{fimg}_d_{i}/masks')
-        #imageio.imwrite(f'{save_dir}/{fimg}_d_{i}/images/{fimg}_d_{i}.png', tile_img)
-        #imageio.imwrite(f'{save_dir}/{fimg}_d_{i}/masks/{fimg}_l_{i}.png', tile_lab)
-    """
+        # save png images
+        imageio.imwrite(f'{save_dir}/{fimg}_img_{i+1}.png', tile_img)
+        imageio.imwrite(f'{save_dir}/{fimg}_lbl_{i+1}.png', tile_lab)
