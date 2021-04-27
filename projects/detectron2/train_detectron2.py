@@ -29,7 +29,7 @@ def run(cfg):
     # Path and directory configurations
     input_dir = cfg.DATASET.OUTPUT_DIRECTORY
     cfg.OUTPUT_DIR = cfg.MODEL.OUTPUT_DIRECTORY
-    dataset_name = cfg.DATASET.DESCRIPTION
+    dataset_name = cfg.DATASET.COCO_METADATA.DESCRIPTION
 
     # Registor COCO datasets for train, val, and test
     for curType in ['TRAIN', 'VAL', 'TEST']:
