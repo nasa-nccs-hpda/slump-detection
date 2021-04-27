@@ -40,9 +40,16 @@ DATASET:
       year: "2021"
       contributor: "Jordan A. Caraballo-Vega"
     LICENSES:
-      - > id: 1
-          name: "World View Maxar Agreement",
-          url: "https://www.nccs.nasa.gov"
+      id: 1
+      name: "World View Maxar Agreement",
+      url: "https://www.nccs.nasa.gov"
+    CATEGORIES:
+      id: 1
+      name: "Slump"
+      supercategory: "slump"
+    CATEGORY_INFO:
+      id: 1
+      is_crowd: False
 MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   MASK_ON: True

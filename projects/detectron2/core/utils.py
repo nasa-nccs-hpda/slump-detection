@@ -90,9 +90,14 @@ def gen_coco_dataset(
     print(cfg.DATASET.COCO_METADATA.INFO, type(cfg.DATASET.COCO_METADATA.INFO))
     
     INFO = dict(cfg.DATASET.COCO_METADATA.INFO)
-    LICENSES = cfg.DATASET.COCO_METADATA.LICENSES
+    LICENSES = list(dict(cfg.DATASET.COCO_METADATA.LICENSES))
+    CATEGORIES = list(dict(cfg.DATASET.COCO_METADATA.CATEGORIES))
+    CATEGORY_INFO = dict(cfg.DATASET.COCO_METADATA.CATEGORY_INFO)
 
-    print(LICENSES, type(LICENSES))
+    print(LICENSES)
+    print(CATEGORIES)
+    print(CATEGORY_INFO)
+    
     """
     if not os.path.isfile(jsonOut):
 
