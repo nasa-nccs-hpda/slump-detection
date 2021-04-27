@@ -1,7 +1,11 @@
 # Main Configuration FIle for Slump Detection Architecture.
-# DO NOT MODIFY THIS FILE, USE THIS AS A BASE AND APPEND
-# NEW CONFIGURATIONS TO IT.
 # AUTHOR: Jordan A Caraballo-Vega, jordan.a.caraballo-vega@nasa.gov
+INPUT:
+  MIN_SIZE_TEST: 256
+  MIN_SIZE_TRAIN: (256, 640, 672, 704, 736, 768, 800)
+DATASETS:
+  TRAIN: ('slump_dataset_train',)
+  TEST: ('slump_dataset_val',)
 MODEL:
   META_ARCHITECTURE: "GeneralizedRCNN"
   BACKBONE:
@@ -33,15 +37,9 @@ MODEL:
     NAME: "MaskRCNNConvUpsampleHead"
     NUM_CONV: 4
     POOLER_RESOLUTION: 14
-DATASETS:
-  TRAIN: ('slump_dataset_train',)
-  TEST: ('slump_dataset_val',)
 SOLVER:
   IMS_PER_BATCH: 16
   BASE_LR: 0.02
   STEPS: (60000, 80000)
   MAX_ITER: 90000
-INPUT:
-  MIN_SIZE_TEST: 256
-  MIN_SIZE_TRAIN: (256, 640, 672, 704, 736, 768, 800)
 VERSION: 2
