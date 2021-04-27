@@ -41,7 +41,7 @@ DATASET:
       contributor: "Jordan A. Caraballo-Vega"
     LICENSES:
       id: 1
-      name: "World View Maxar Agreement",
+      name: "World View Maxar Agreement"
       url: "https://www.nccs.nasa.gov"
     CATEGORIES:
       id: 1
