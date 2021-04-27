@@ -78,69 +78,40 @@ def gen_data_png(fimg, img, label, cfg, set='train'):
 def gen_coco_dataset(
         cfg, set='TRAIN', img_reg='*_img_*.png', label_reg='*_lbl_*.png'
      ):
-
+    """
+    Save JSON file with COCO formatted dataset
+    Args:
+        cfg (CfgNode obj): configuration object
+        set (str): dataset to prepare
+        img_reg (str): image filename regex
+        label_reg (str): label filename regex
+    """
     data_dir = cfg.DATASET.OUTPUT_DIRECTORY  # root directory
     input_dir = os.path.join(data_dir, set)  # directory where images reside
-    json_out = f'{data_dir}/{cfg.DATASET.DESCRIPTION}_{set}.json'  # output file
+    json_out = f'{data_dir}/{cfg.DATASET.DESCRIPTION}_{set}.json'  # output
 
-    #tmp_dir = os.path.join(
-    #    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tmp'))
-    #)
-
-    print(cfg.DATASET.COCO_METADATA.INFO, type(cfg.DATASET.COCO_METADATA.INFO))
-    
-    INFO = dict(cfg.DATASET.COCO_METADATA.INFO)
-    LICENSES = dict(cfg.DATASET.COCO_METADATA.LICENSES)
-    CATEGORIES = dict(cfg.DATASET.COCO_METADATA.CATEGORIES)
-    CATEGORY_INFO = dict(cfg.DATASET.COCO_METADATA.CATEGORY_INFO)
-
-    print(LICENSES)
-    print(CATEGORIES)
-    print(CATEGORY_INFO)
-    
-    """
     if not os.path.isfile(jsonOut):
 
         # src: https://patrickwasp.com/create-your-own-coco-style-dataset/
-        INFO = {
-            "description": "Slump Detection in World View VHR Imagery",
-            "url": "https://www.nccs.nasa.gov",
-            "version": "0.1.0",
-            "year": "2021",
-            "contributor": "Jordan A. Caraballo-Vega",
-            "date_created": datetime.datetime.utcnow().isoformat(' ')
-        }
+        # Define several sections of the COCO Dataset Format
 
-        LICENSES = [
-            {
-                "id": 1,
-                "name": "World View Maxar Agreement",
-                "url": "https://www.nccs.nasa.gov"
-            }
-        ]
+        # General Information
+        INFO = dict(cfg.DATASET.COCO_METADATA.INFO)
+        INFO["date_created"] = datetime.datetime.utcnow().isoformat(' ')
 
-        CATEGORIES = [
-            {
-                "id": 1,
-                "name": "Slump",
-                "supercategory": "slump"
-            }
-        ]
+        # Licenses and categories
+        LICENSES = [dict(cfg.DATASET.COCO_METADATA.LICENSES)]
+        CATEGORIES = [dict(cfg.DATASET.COCO_METADATA.CATEGORIES)]
+        CATEGORY_INFO = dict(cfg.DATASET.COCO_METADATA.CATEGORY_INFO
 
-        classId = 1  # only have slumps for now
-        isCrowd = False
-        categoryInfo = {
-            'id': classId,
-            'is_crowd': isCrowd,
-        }
-
+        # Retrieve filenames from local storage
         train_names = sorted(glob.glob(f'{input_dir}/{img_reg}'))
         mask_names = sorted(glob.glob(f'{input_dir}/{label_reg}'))
         print(f"Number of train and mask images: {len(train_names)}")
 
-        images = []
-        annotations = []
-
+        # place holders to store dataset metadata
+        images = list()
+        annotations = list()
         pastId = 0
 
         # go through each image
@@ -148,7 +119,6 @@ def gen_coco_dataset(
 
             curImgFile = curImgName
             curMaskFile = curMaskName
-            print(curImgFile, curMaskFile)
 
             # taking care of the images
             curImg = Image.open(curImgFile)
@@ -175,7 +145,7 @@ def gen_coco_dataset(
             else:
                 print('\t\tNo annotationInfo found for: ' + curMaskName)
 
-        cocoInfo = {
+        coco_info = {
             "info": INFO,
             "licenses": LICENSES,
             "categories": CATEGORIES,
@@ -186,5 +156,4 @@ def gen_coco_dataset(
         with open(jsonOut, 'w') as f:
             f.write(json.dumps(cocoInfo))
     else:
-        sys.exit(f'{jsonOut} already exists. Please remove it.')
-    """
+        sys.exit(f'{jsonOut} already exists. Please remove it and re-run.')
