@@ -1,8 +1,8 @@
 # Main Configuration FIle for Slump Detection Architecture.
 # AUTHOR: Jordan A Caraballo-Vega, jordan.a.caraballo-vega@nasa.gov
 DATASETS:
-  TRAIN: ('slump_dataset_train',)
-  VAL: ('slump_dataset_train',)
+  TRAIN: ('slump_dataset_TRAIN',)
+  VAL: ('slump_dataset_VAL',)
   TEST: ()
 MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
