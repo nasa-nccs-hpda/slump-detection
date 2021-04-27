@@ -4,7 +4,7 @@
 import argparse
 import xarray as xr
 import numpy as np
-from detectron2.config import get_cfg, CfgNode
+from detectron2.config import get_cfg
 # from skimage import img_as_ubyte
 from core.utils import get_bands, gen_data_png
 
@@ -26,11 +26,13 @@ def arg_parser():
     return parser.parse_args()
 
 
-def run(config):
+def run(cfg):
     """
     Generate dataset for training detectron2 and/or Mask
     """
-    for image, label in zip(config['images'], config['labels']):
+
+    # Process each image individually
+    for image, label in zip(cfg.DATASET.IMAGES, cfg.DATASET.LABELS):
 
         # read input data
         image_data = xr.open_rasterio(image).transpose("y", "x", "band")
@@ -39,7 +41,7 @@ def run(config):
 
         # drop bands we are not interested in given the ones we actually want
         image_data = get_bands(
-            image_data, config['input_bands'], config['output_bands']
+            image_data, cfg.INPUT.INPUT_BANDS, cfg.INPUT.OUTPUT_BANDS
         ).values
         print("Image after get_bands: ", image_data.shape, label_data.shape)
 
@@ -55,13 +57,13 @@ def run(config):
 
         # extract tiles from the imagery and generate masks
         gen_data_png(
-            image, image_data, label_data, config, set='train'
+            image, image_data, label_data, cfg, set='TRAIN'
         )
         gen_data_png(
-            image, image_data, label_data, config, set='test'
+            image, image_data, label_data, cfg, set='TEST'
         )
         gen_data_png(
-            image, image_data, label_data, config, set='val'
+            image, image_data, label_data, cfg, set='VAL'
         )
 
 
@@ -77,10 +79,10 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------
     cfg = get_cfg()  # get default configurations in place
     cfg.set_new_allowed(True)  # allow for new configuration objects
-    cfg.INPUT.MIN_SIZE_TRAIN = 256  # small hack to allow merging new field types
+    cfg.INPUT.MIN_SIZE_TRAIN = 256  # small hack to allow merging new fields
     cfg.merge_from_file(args.config_filename)  # merge from file
 
     # ---------------------------------------------------------------------------
     # Run the main
     # ---------------------------------------------------------------------------
-    #run(cfg)
+    run(cfg)

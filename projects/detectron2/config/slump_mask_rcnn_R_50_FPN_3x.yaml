@@ -29,6 +29,8 @@ DATASET:
   NUMBER_OF_VAL_TILES: 25
   NUMBER_OF_TRUE_PIXELS: 0
   OUTPUT_DIRECTORY: '../../data'
+  TRAIN_DATASET_NAME: ('slump_dataset_train',)
+  TEST_DATASET_NAME: ('slump_dataset_val',)
 MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   MASK_ON: True

@@ -28,11 +28,14 @@ def gen_data_png(fimg, img, label, config, set='train'):
 
     # set dimensions of the input image array, and get desired tile size
     y_dim, x_dim, z_dim = img.shape
-    tsz = config['tile_size']
-    n_true_pixels = config['n_true_pixels']
+    tsz = config.INPUT.MIN_SIZE_TRAIN
+    n_true_pixels = config.DATASET.NUMBER_OF_TRUE_PIXELS
     fimg = fimg.split('/')[-1][:-4]
-    save_dir = config['out_dir'] + f'/{set}'
+    save_dir = config.DATASET.OUTPUT_DIRECTORY + f'/{set}'
 
+    print(save_dir)
+
+    """
     os.system(f'mkdir -p {save_dir}')
 
     # generate n number of tiles
@@ -61,3 +64,4 @@ def gen_data_png(fimg, img, label, config, set='train'):
         #os.system(f'mkdir -p {save_dir}/{fimg}_d_{i}/images {save_dir}/{fimg}_d_{i}/masks')
         #imageio.imwrite(f'{save_dir}/{fimg}_d_{i}/images/{fimg}_d_{i}.png', tile_img)
         #imageio.imwrite(f'{save_dir}/{fimg}_d_{i}/masks/{fimg}_l_{i}.png', tile_lab)
+    """
