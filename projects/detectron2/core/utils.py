@@ -10,7 +10,8 @@ import json                # for json handling
 import random              # for random integers
 import numpy as np         # for arrays modifications
 import imageio             # for managing images
-import pycococreatortools  # for coco dataset resources
+#import pycococreatortools  # for coco dataset resources
+from core import pycococreatortools
 from PIL import Image      # for managing images
 
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
