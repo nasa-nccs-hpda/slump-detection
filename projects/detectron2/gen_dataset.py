@@ -6,7 +6,7 @@ import xarray as xr
 import numpy as np
 from detectron2.config import get_cfg
 # from skimage import img_as_ubyte
-from core.utils import get_bands, gen_data_png
+from core.utils import get_bands, gen_data_png, gen_coco_dataset
 
 
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
@@ -57,6 +57,10 @@ def run(cfg):
 
         # extract tiles from the imagery and generate masks
         gen_data_png(image, image_data, label_data, cfg, set='TRAIN')
+        gen_coco_dataset(
+            cfg, set='TRAIN', img_reg='*_img_*.png', label_reg='*_lbl_*.png'
+        )
+
         gen_data_png(image, image_data, label_data, cfg, set='TEST')
         gen_data_png(image, image_data, label_data, cfg, set='VAL')
 
