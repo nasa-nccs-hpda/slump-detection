@@ -1,18 +1,17 @@
 # --------------------------------------------------------------------------
 # Utilities directory for slump detection models generation.
 # --------------------------------------------------------------------------
-import os                  # for os utilities
-import sys                 # for os utilities
-from tqdm import tqdm      # for progress bar
-import datetime            # for dates manipulation
-import glob                # for local files manipulation
-import json                # for json handling
-import random              # for random integers
-import numpy as np         # for arrays modifications
-import imageio             # for managing images
-#import pycococreatortools  # for coco dataset resources
-from core import pycococreatortools
-from PIL import Image      # for managing images
+import os                            # for os utilities
+import sys                           # for os utilities
+from tqdm import tqdm                # for progress bar
+import datetime                      # for dates manipulation
+import glob                          # for local files manipulation
+import json                          # for json handling
+import random                        # for random integers
+import numpy as np                   # for arrays modifications
+import imageio                       # for managing images
+from core import pycococreatortools  # for coco utilities
+from PIL import Image                # for managing images
 
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
 __email__ = "jordan.a.caraballo-vega@nasa.gov"
@@ -82,13 +81,15 @@ def gen_coco_dataset(
 
     data_dir = cfg.DATASET.OUTPUT_DIRECTORY  # root directory
     input_dir = os.path.join(data_dir, set)  # directory where images reside
-    jsonOut = f'{data_dir}/{cfg.DATASET.DESCRIPTION}_{set}.json'  # output file
-    
+    json_out = f'{data_dir}/{cfg.DATASET.DESCRIPTION}_{set}.json'  # output file
+
     #tmp_dir = os.path.join(
     #    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tmp'))
     #)
 
     print(cfg.DATASET.COCO_METADATA.INFO, type(cfg.DATASET.COCO_METADATA.INFO))
+    testing = dict(cfg.DATASET.COCO_METADATA.INFO)
+    print(testing, type(testing))
     """
     if not os.path.isfile(jsonOut):
 
