@@ -61,7 +61,7 @@ def run(cfg):
     dataset_dicts = DatasetCatalog.get(dataset_name + '_TEST')
     #cfg.DATASETS.TEST = (dataset_name + '_test')
 
-    inLrg = '../../data/test/trialrun_data_img_20.png'
+    inLrg = '../../data/TEST/trialrun_data_img_20.png'
 
     #for d in random.sample(dataset_dicts, 3):
     #    im = cv2.imread(d["file_name"])
