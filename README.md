@@ -114,16 +114,22 @@ cp /data/location/.tif $NOBACKUP/slump-detection/data
 3. Generate train, test, and validation datasets
 
 ```bash
+cd $NOBACKUP/slump-detection/projects/detectron2
+sbatch gen_dataset.sh
 ```
 
 4. Train a new model
 
 ```bash
+cd $NOBACKUP/slump-detection/projects/detectron2
+sbatch train_detectron2.sh
 ```
 
 5. Classify given imagery
 
 ```bash
+cd $NOBACKUP/slump-detection/projects/detectron2
+sbatch predict_detectron2.sh
 ```
 
 ## Authors
