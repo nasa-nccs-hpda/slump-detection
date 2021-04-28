@@ -1,5 +1,6 @@
 .DS_Store
-data/
 *.json
 __pycache__
 *.sif
+*.tif
+*.png

@@ -19,8 +19,9 @@ leveraging MaskRCNN and Fast RCNN. The backend engine is PyTorch.
 1. [Logging-In](#Logging_In)
 2. [Container Environment Installation](#Container_Environment_Installation)
 3. [Working Inside a Container](#Working_Inside_Container)
-4. [Authors](#Authors)
-5. [References](#References)
+4. [Getting Started](#Getting_Started)
+5. [Authors](#Authors)
+6. [References](#References)
 
 ## Logging-In <a name="Logging_In"></a>
 
@@ -92,6 +93,38 @@ where username is your NASA auid. From here, you can run any command inside the 
 for Singularity containers to have access to other paths within the HPC environment, we need to bind
 directories to particular locations in the container. The command above is binding your $NOBACKUP directory
 to be visible from inside the container.
+
+## Getting Started <a name="Getting_Started"></a>
+
+The following is a summarized set of steps to get started and running in less than 5 minutes once the container image has been downloaded.
+
+1. Clone this repository into your ADAPT space
+
+```bash
+cd $NOBACKUP
+git clone https://github.com/jordancaraballo/slump-detection.git
+```
+
+2. Copy the data into the data/ directory
+
+```bash
+cp /data/location/.tif $NOBACKUP/slump-detection/data
+```
+
+3. Generate train, test, and validation datasets
+
+```bash
+```
+
+4. Train a new model
+
+```bash
+```
+
+5. Classify given imagery
+
+```bash
+```
 
 ## Authors
 
