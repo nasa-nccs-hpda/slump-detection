@@ -5,12 +5,14 @@ Using the detectron2 framework for the task of instance segmentation.
 ## Table of Contents
 
 1. [Expected Input Data](#Expected_Input_Data)
-2. [Configuration Files](#Container_Environment_Installation)
-3. [Working Inside a Container](#Working_Inside_Container)
-4. [Authors](#Authors)
-5. [References](#References)
+2. [Configuration Files](#Configuration_Files)
+3. [Generate Dataset](#Generate_Dataset)
+4. [Train](#Train)
+5. [Predict](#Predict)
+6. [Authors](#Authors)
+7. [References](#References)
 
-## Expected Input Data
+## Expected Input Data <a name="Expected_Input_Data"></a>
 
 The following scripts expect data in GeoTIF format. There should be a file with raw data, preferebly TOA corrected, and a file with
 labels or the mask to map with. The expected data file can have anywhere from 3 to N number of channels/bands, while the mask file should
@@ -22,7 +24,7 @@ Example input shape are (5000,5000,6) for data rasters, and (5000,5000) for mask
 rio clip WV02_20160709_M1BS_10300100591D6600-toa_pansharpen.tif trialrun_data.tif --like trialrun_label.tif
 ```
 
-## Configuration Files
+## Configuration Files <a name="Configuration_Files"></a>
 
 Once data files and labels are available, we can proceed to configure our datasets and models. There are two configuration files under the config/ directory. The Base**.yaml file has the default configurations for the model. The file slump**.yaml has specific configurations targeted to the problem in question. For any changes to the model, feel free to modify the slump**.yaml. A README has been included in the directory for additional information.
 
@@ -35,61 +37,47 @@ The current set of configuration files has the following information:
 - transfer learning from ImageNet models is applied for faster training
 - instance segmentation using Fast Mask RCNN is applied
 
-## Generate Dataset
+## Generate Dataset <a name="Generate_Dataset"></a>
 
-In this section of the pipeline we take raw raster and masks, and we generate training and validation
-datasets to work with. The following script will save NPZ files into local storage with the train and mask
-mappings taken from the data.csv file. Parameters are taken from the Configuration File. Expect to find two
-new directories on the ROOT_DIR specified on the Configuration file with an NPZ file per raster. These NPZ
-files contain the dataset mappings with 'x' for data, and 'y' for the label.
-
-if specified, data will be stanrdardized using local standardization.
+In this section of the pipeline we take raw raster and masks, and we generate train, test and validation
+datasets to work with. The following script will save png files into local storage with the train and mask
+mappings taken from the configuration file. Expect to find 3 new directories on the OUTPUT_DIRECTORY from the
+DATASET section specified in the Configuration file with N number of pngs per image. Expect to find 3 JSON 
+formatted COCO dataset files that will be included in the model training.
 
 ```bash
-python preprocessing.py
+cd $NOBACKUP/slump-detection/project/detectron2
+sbatch gen_dataset.sh
 ```
 
-## Train
+## Train <a name="Train"></a>
 
 In this section of the pipeline we proceed to train the model. Please refer to the Configuration file for more
-details on parameters required for training. The main script will: read the data files, map them into TensorFlow
-datasets, initialize the UNet model, and proceed with training. A model (.h5 file) will be saved for each epoch
-that improved model performance.
+details on parameters required for training. The main script will: read the data files, map them into PyTorch
+datasets, initialize the Mask RCNN model, and proceed with training. A model (.pth file) will be saved at the end
+of training. Under the OUTPUT_DIRECTORY you will find a metrics file with general metrics of the model such as
+accuracy, precission, and true positives.
 
 You might notice that the first epoch of the model takes a long time to train. This is expected since the model
-is being optimized during the first epoch. Distributed training across multiple GPUs is enabled, together with
-mixed precission for additional performance enhancements. Upcoming modifications will include A100 performance
+is being optimized during the first epoch. Upcoming modifications will include A100 performance
 enhancements and Horovod for multi-node training.
 
 ```bash
-python train.py
+cd $NOBACKUP/slump-detection/project/detectron2
+sbatch train_detectron2.sh
 ```
 
-### Predict
+## Predict <a name="Predict"></a>
 
-In this section we proceed to train the desired data taking one of the saved models, and using it for predictions.
+In this section we proceed to classify the desired data taking one of the saved models, and using it for predictions.
 Please refer to the Configuration file for more details on parameters required for predicting. Ideally, all images to
 predict will be stored in the same directory ending on .tif extensions. The script will go through every file, predict
 it and output both the predicted GeoTIF and the probabilities arrays.
 
 ```bash
-python predict.py
+cd $NOBACKUP/slump-detection/project/detectron2
+sbatch predict_detectron2.sh
 ```
-
-
-
-
-## Generate Small Tiles
-
-```bash
-python gen_dataset.py -l ../../data/trialrun_label.tif -i ../../data/trialrun_data.tif -o ../../data -b 0 1 2
-```
-
-[x] open imagery
-[ ] get tiles
-[ ] convert to png in directory format
-
-docker build .
 
 ## References
 

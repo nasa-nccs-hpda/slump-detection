@@ -59,6 +59,7 @@ This section includes configurations related to the data that is being used in t
 |MODEL.ROI_HEADS.NAME| name for the middle convolutional layers  |
 |MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE| batch size per image during training  |
 |MODEL.ROI_HEADS.NUM_CLASSES| number of classes to train on; 1 for binary problems  |
+|MODEL.ROI_HEADS.SCORE_THRESH_TEST | probability value to accept true value pixel as prediction |
 |MODEL.OUTPUT_DIRECTORY| directory to store model output  |
 |MODEL.MODEL_NAME| model filename to store on disk  |
 |MODEL.DELETE_MODEL| defines if the model needs to be deleted on each new run  |
