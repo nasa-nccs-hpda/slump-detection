@@ -23,7 +23,7 @@ def run(cfg):
     """
 
     # Process each image individually
-    for image, label in zip(cfg.DATASET.IMAGES, cfg.DATASET.LABELS):
+    for image, label in zip(cfg.DATASETS.IMAGES, cfg.DATASETS.LABELS):
 
         # read input data
         image_data = xr.open_rasterio(image).transpose("y", "x", "band")

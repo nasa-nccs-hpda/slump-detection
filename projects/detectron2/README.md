@@ -14,31 +14,13 @@ Using the detectron2 framework for the task of instance segmentation.
 
 The following scripts expect data in GeoTIF format. There should be a file with raw data, preferebly TOA corrected, and a file with
 labels or the mask to map with. The expected data file can have anywhere from 3 to N number of channels/bands, while the mask file should
-have a single channel/band with integer values. Each integer value representing a class to classify. At the end of the day, the directories
-should look similar to the following example:
+have a single channel/band with integer values. Each integer value representing a class to classify.
+
+Example input shape are (5000,5000,6) for data rasters, and (5000,5000) for mask files. Note that both the image and the mask file have the same height and width dimensions. The information regarding the data will be stored in a configuration file under the config/ directory of this project. In the case where a label file was generated without its matching data file, the following rasterio script can be executed to extract its matching data file.
 
 ```bash
-/att/data/data01.tif, /att/data/data02.tif, /att/data/data03.tif
-/att/labels/labels01.tif, /att/labels/labels02.tif, /att/labels/labels03.tif
+rio clip WV02_20160709_M1BS_10300100591D6600-toa_pansharpen.tif trialrun_data.tif --like trialrun_label.tif
 ```
-
-Example input shape are (5000,5000,6) for data rasters, and (5000,5000) for mask files. The information regarding the data will be stored
-in a CSV file located under scripts/config/data.csv, with the following format:
-
-```bash
-data,label,ntiles_train,ntiles_val,ymin,ymax,xmin,xmax
-Keelin00_20120130_data.tif,cm_Keelin00_20120130_new_2.tif,500,1000,0,50,0,50
-Keelin00_20180306_data.tif,cm_Keelin00_20180306_new_2.tif,500,1000,0,50,0,50
-Keelin01_20151117_data.tif,cm_Keelin01_20151117_new.tif,500,1000,0,50,0,50
-```
-
-Where:
-
-* data: is the filename with the data values
-* label: is the filename with the mask values
-* ntiles_train: number of training tiles to extract from the data file
-* ntiles_val: number of validation tiles to extract from the data file
-* ymin,ymax,xmin,xmax: values to exclude from training dataset to include in validation tiles
 
 ## Configuration File
 

@@ -1,9 +1,26 @@
-# Main Configuration FIle for Slump Detection Architecture.
-# AUTHOR: Jordan A Caraballo-Vega, jordan.a.caraballo-vega@nasa.gov
+# -------------------------------------------------------------------------
+# Main Configuration File for Slump Detection Architecture.
+# This file is divided into sections that feed the scripts for the
+# detectron2 project. Information for each field is listed below.
+# -------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------
+# DATASETS
+# -------------------------------------------------------------------------
 DATASETS:
   TRAIN: ('slump_dataset_TRAIN',)
   VAL: ('slump_dataset_VAL',)
   TEST: ()
+
+# -------------------------------------------------------------------------
+# DATALOADER
+# -------------------------------------------------------------------------
+DATALOADER:
+  NUM_WORKERS: 4
+
+# -------------------------------------------------------------------------
+# MODEL
+# -------------------------------------------------------------------------
 MODEL:
   WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   MASK_ON: True
@@ -39,11 +56,12 @@ MODEL:
     NAME: "MaskRCNNConvUpsampleHead"
     NUM_CONV: 4
     POOLER_RESOLUTION: 14
+# -------------------------------------------------------------------------
+# SOLVER
+# -------------------------------------------------------------------------
 SOLVER:
   IMS_PER_BATCH: 16
   BASE_LR: 0.02
   STEPS: (210000, 250000)
   MAX_ITER: 90000
-DATALOADER:
-  NUM_WORKERS: 4
 VERSION: 2

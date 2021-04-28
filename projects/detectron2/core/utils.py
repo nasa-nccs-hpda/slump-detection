@@ -57,11 +57,11 @@ def gen_data_png(fimg, img, label, cfg, set='train'):
     y_dim, x_dim, z_dim = img.shape  # dimensions of imagery
     tsz = cfg.INPUT.MIN_SIZE_TRAIN  # tile size to extract from imagery
 
-    n_true_pixels = cfg.DATASET.NUM_TRUE_PIXELS  # num of true pixels per tile
+    n_true_pixels = cfg.DATASETS.NUM_TRUE_PIXELS  # num of true pixels per tile
     fimg = fimg.split('/')[-1][:-4]  # image filename for output
-    save_dir = cfg.DATASET.OUTPUT_DIRECTORY + f'/{set}'  # output directory
+    save_dir = cfg.DATASETS.OUTPUT_DIRECTORY + f'/{set}'  # output directory
 
-    n_tiles = cfg.DATASET[f'NUM_{set}_TILES']  # number of tiles to extract
+    n_tiles = cfg.DATASETS[f'NUM_{set}_TILES']  # number of tiles to extract
     os.system(f'mkdir -p {save_dir}')  # create saving directory
 
     # generate n number of tiles
@@ -99,9 +99,9 @@ def gen_coco_dataset(
         img_reg (str): image filename regex
         label_reg (str): label filename regex
     """
-    data_dir = cfg.DATASET.OUTPUT_DIRECTORY  # root directory
+    data_dir = cfg.DATASETS.OUTPUT_DIRECTORY  # root directory
     input_dir = os.path.join(data_dir, set)  # directory where images reside
-    dataset_name = cfg.DATASET.COCO_METADATA.DESCRIPTION
+    dataset_name = cfg.DATASETS.COCO_METADATA.DESCRIPTION
     json_out = f'{data_dir}/{dataset_name}_{set}.json'  # output
 
     if not os.path.isfile(json_out):
@@ -110,13 +110,13 @@ def gen_coco_dataset(
         # Define several sections of the COCO Dataset Format
 
         # General Information
-        INFO = dict(cfg.DATASET.COCO_METADATA.INFO)
+        INFO = dict(cfg.DATASETS.COCO_METADATA.INFO)
         INFO["date_created"] = datetime.datetime.utcnow().isoformat(' ')
 
         # Licenses and categories
-        LICENSES = [dict(cfg.DATASET.COCO_METADATA.LICENSES)]
-        CATEGORIES = [dict(cfg.DATASET.COCO_METADATA.CATEGORIES)]
-        CATEGORY_INFO = dict(cfg.DATASET.COCO_METADATA.CATEGORY_INFO)
+        LICENSES = [dict(cfg.DATASETS.COCO_METADATA.LICENSES)]
+        CATEGORIES = [dict(cfg.DATASETS.COCO_METADATA.CATEGORIES)]
+        CATEGORY_INFO = dict(cfg.DATASETS.COCO_METADATA.CATEGORY_INFO)
 
         # Retrieve filenames from local storage
         train_names = sorted(glob.glob(f'{input_dir}/{img_reg}'))
