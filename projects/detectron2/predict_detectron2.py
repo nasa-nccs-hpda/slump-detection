@@ -79,6 +79,8 @@ def run(cfg):
     print(im.shape)
     #print(type(im))
     outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+    print(type(outputs))
+
     v = Visualizer(
             im[:, :, ::-1],
             metadata=metadata,
