@@ -129,7 +129,7 @@ def run(cfg):
         if not os.path.isfile(save_image):
 
             print(f'Starting to predict {fname}')
-            print(cfg.DATALOADER.DASK_SIZE, type(cfg.DATALOADER.DASK_SIZE))
+            print(dict(cfg.DATALOADER.DASK_SIZE), type(cfg.DATALOADER.DASK_SIZE))
             print(save_image)
             # --------------------------------------------------------------------------------
             # Extracting and resizing test and validation data
