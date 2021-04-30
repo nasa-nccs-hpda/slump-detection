@@ -3,10 +3,13 @@
 # ---------------------------------------------------------------------
 import os
 import cv2
+import numpy as np
 import matplotlib.pyplot as plt
 from core.utils import arg_parser
 
 # import some common detectron2 utilities
+import torch
+from detectron2.modeling import build_model
 from detectron2.utils.logger import setup_logger
 from detectron2 import model_zoo
 from detectron2.engine import DefaultTrainer
@@ -25,7 +28,7 @@ def run(cfg):
     """
     Train model using detectron2 framework.
     """
-
+    """
     # Path and directory configurations
     input_dir = cfg.DATASETS.OUTPUT_DIRECTORY
     cfg.OUTPUT_DIR = cfg.MODEL.OUTPUT_DIRECTORY
@@ -44,42 +47,21 @@ def run(cfg):
 
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
-    #########################################################
-    # 3. Inference & evaluation using the trained model ###
-    #########################################################
-
-    # First, let's create a predictor using the model we just trained
-    # Inference should use the config with parameters that are used in training
-    # Changes for inference:
-
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
-    #cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.75   # set a custom threshold
 
     predictor = DefaultPredictor(cfg)
     
     metadata = MetadataCatalog.get(dataset_name + '_TEST')
     dataset_dicts = DatasetCatalog.get(dataset_name + '_TEST')
-    #cfg.DATASETS.TEST = (dataset_name + '_test')
 
     inLrg = '../../data/TEST/trialrun_data_img_20.png'
-
-    #for d in random.sample(dataset_dicts, 3):
-    #    im = cv2.imread(d["file_name"])
-    #    outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
-    #    v = Visualizer(
-    #            im[:, :, ::-1],
-    #            metadata=metadata, scale=0.5,
-    #            instance_mode=ColorMode.IMAGE_BW  # remove the colors of unsegmented pixels. This option is only available for segmentation models
-    #    )
-    #    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    #    #cv2_imshow(out.get_image()[:, :, ::-1])
-    #    cv2.imwrite(fileOut,out.get_image()[:, :, ::-1])
 
     im = cv2.imread(inLrg)
     print(im.shape)
     #print(type(im))
     outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
     print(type(outputs))
+    print(type(outputs['instances']))
 
     v = Visualizer(
             im[:, :, ::-1],
@@ -87,55 +69,54 @@ def run(cfg):
             scale=1,
             #instance_mode=ColorMode.IMAGE_BW   # remove the colors of unsegmented pixels. This option is only available for segmentation models
     )
-    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    #print(metadata)
+    #out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    #out = v.draw_binary_mask(outputs["instances"].to("cpu"))
+    #out = v.draw_sem_seg(outputs["instances"].to("cpu"))
     predictFileName = os.path.basename('predict.png')
     file_out = os.path.join(cfg.OUTPUT_DIR, predictFileName)
 
+    #cv2.imwrite(file_out, out.get_image()[:, :, ::-1])
+
+    bin_mask= np.zeros((256, 256))
+
+    for bin in outputs['instances'].pred_masks.to('cpu'):
+         print('new')
+         print(type(bin))
+         print(np.unique(bin.numpy().astype(int)))
+         v.draw_binary_mask(bin.numpy(), color='white', edge_color='white')
+         bin_mask += bin.numpy()
+         print(np.unique(bin_mask))
+    v._create_grayscale_image()
+    out = v.get_output()
     cv2.imwrite(file_out, out.get_image()[:, :, ::-1])
-
-
+    bin_mask[bin_mask > 0] = 255
+    cv2.imwrite('pp.png', bin_mask)
     """
-    from detectron2.modeling import build_model
-    from detectron2.checkpoint import DetectionCheckpointer
+
+    # Path and directory configurations
+    input_dir = cfg.DATASETS.OUTPUT_DIRECTORY
+    cfg.OUTPUT_DIR = cfg.MODEL.OUTPUT_DIRECTORY
+    dataset_name = cfg.DATASETS.COCO_METADATA.DESCRIPTION
+    model_name = cfg.MODEL.MODEL_NAME
+
+    os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 
     model = build_model(cfg)
-    #print(model)
-    DetectionCheckpointer(model).load(cfg.MODEL.WEIGHTS)
-    print(model.eval())
-    #model.eval()
-    """
 
-    """
-    #When watching it run:
-    '''
-    Notes from convo with Jordan:
-    loss_mask -> should be decreaseing
-    total loss needs to be below 1
-    can set callback function to stop at some number of total_loss so you don't have to watching
-    can also set callback for loss_mask, but not as useful
-    '''
+    model_dict = torch.load(os.path.join(cfg.OUTPUT_DIR, "model_final.pth"), map_location=torch.device('cpu'))
+    model.load_state_dict(model_dict['model'] )
+    model.train(False)
 
-    # dataset_dicts = get_balloon_dicts("balloon/val")
-    metadata = MetadataCatalog.get(dataset_name + '_test')
-    dataset_dicts = DatasetCatalog.get(dataset_name + '_test')
+    inLrg = '../../data/TEST/trialrun_data_img_20.png'
+    img = np.transpose(cv2.imread(inLrg),(2,0,1))
+    img_tensor = torch.from_numpy(img)
 
-    cfg.DATASETS.TEST = (dataset_name + '_test')
+    inputs = [{"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}]
 
-    #for d in dataset_dicts:#random.sample(dataset_dicts, 3):
-    with CodeTimer('predict '+ inLrg):# + os.path.basename(d["file_name"])):
-    im = cv2.imread(inLrg)
-    outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
-    v = Visualizer(im[:, :, ::-1],
-                    metadata=metadata,
-                    scale=1, 
-                    #instance_mode=ColorMode.IMAGE_BW   # remove the colors of unsegmented pixels. This option is only available for segmentation models
-    )
-    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    predictFileName = os.path.basename(d['file_name'][:-4]+'_predict.png')
-    fileOut = os.path.join(outDir,predictFileName)
-    
-    cv2.imwrite(fileOut,out.get_image()[:, :, ::-1])
-    """
+    outputs = model(inputs)
+    print(outputs)
 
 
 if __name__ == "__main__":
