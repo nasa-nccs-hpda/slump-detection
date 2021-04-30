@@ -3,6 +3,7 @@
 # --------------------------------------------------------------------------
 import os                            # for os utilities
 import sys                           # for os utilities
+import math                          # for math operations
 from tqdm import tqdm                # for progress bar
 import argparse                      # for arguments parsing
 import datetime                      # for dates manipulation
@@ -172,7 +173,7 @@ def gen_coco_dataset(
     else:
         sys.exit(f'{json_out} already exists. Please remove it and re-run.')
 
-def 
+
 def predict_windowing(x, model, config, spline):
     """
     Predict scene using windowing mechanisms.
