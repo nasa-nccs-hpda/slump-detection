@@ -7,7 +7,7 @@ import time
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
-from core.utils import arg_parser
+from core.utils import arg_parser, get_bands
 
 # import some common detectron2 utilities
 import torch
@@ -129,15 +129,18 @@ def run(cfg):
         if not os.path.isfile(save_image):
 
             print(f'Starting to predict {fname}')
-            print(dict(cfg.DATALOADER.DASK_SIZE), type(cfg.DATALOADER.DASK_SIZE))
-            print(save_image)
             # --------------------------------------------------------------------------------
             # Extracting and resizing test and validation data
             # --------------------------------------------------------------------------------
-            x_data = xr.open_rasterio(fname, chunks=cfg.DATALOADER.DASK_SIZE)
+            x_data = xr.open_rasterio(
+                fname, chunks=dict(cfg.DATALOADER.DASK_SIZE)
+            )
             x_data = x_data.transpose("y", "x", "band")
+            x_data = get_bands(
+                x_data, cfg.INPUT.INPUT_BANDS, cfg.INPUT.OUTPUT_BANDS
+            )
+            print(x_data.shape, type(x_data))
             """
-            x_data = x_data[:, :, :4]
 
             # --------------------------------------------------------------------------------
             # Calculate missing indices
@@ -146,7 +149,6 @@ def run(cfg):
             # --------------------------------------------------------------------------------
             # Getting predicted labels
             # --------------------------------------------------------------------------------
-            os.system('mkdir -p {}'.format(config.PRED_SAVE_DIR))
             prediction = predict_sliding_binary(x_data, model, config, spline)
             print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
 
