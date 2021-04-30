@@ -171,3 +171,144 @@ def gen_coco_dataset(
             f.write(json.dumps(coco_info))
     else:
         sys.exit(f'{json_out} already exists. Please remove it and re-run.')
+
+def 
+def predict_windowing(x, model, config, spline):
+    """
+    Predict scene using windowing mechanisms.
+    Args:
+        x (numpy.array): image array
+        model (tf h5): image target size
+        config (Config):
+        spline (numpy.array):
+    Return:
+        prediction scene array probabilities
+    ----------
+    Example
+    ----------
+        predict_windowing(x, model, config, spline)
+    """
+    print("Entering windowing prediction", x.shape)
+
+    img_height = x.shape[0]
+    img_width = x.shape[1]
+    n_channels = x.shape[2]
+
+    # make extended img so that it contains integer number of patches
+    npatches_vertical = math.ceil(img_height / config.TILE_SIZE)
+    npatches_horizontal = math.ceil(img_width / config.TILE_SIZE)
+    extended_height = config.TILE_SIZE * npatches_vertical
+    extended_width = config.TILE_SIZE * npatches_horizontal
+    ext_x = np.zeros(
+        shape=(extended_height, extended_width, n_channels), dtype=np.float32
+    )
+
+    """
+    # fill extended image with mirrors:
+    ext_x[:img_height, :img_width, :] = x
+    for i in range(img_height, extended_height):
+        ext_x[i, :, :] = ext_x[2 * img_height - i - 1, :, :]
+    for j in range(img_width, extended_width):
+        ext_x[:, j, :] = ext_x[:, 2 * img_width - j - 1, :]
+
+    # now we assemble all patches in one array
+    patches_list = []  # do vstack later instead of list
+    for i in range(0, npatches_vertical):
+        for j in range(0, npatches_horizontal):
+            x0, x1 = i * config.TILE_SIZE, (i + 1) * config.TILE_SIZE
+            y0, y1 = j * config.TILE_SIZE, (j + 1) * config.TILE_SIZE
+            patches_list.append(ext_x[x0:x1, y0:y1, :])
+
+    patches_array = np.asarray(patches_list)
+
+    # predictions:
+    patches_predict = \
+        model.predict(patches_array, batch_size=config.PRED_BATCH_SIZE)
+
+    prediction = np.zeros(
+        shape=(extended_height, extended_width, config.N_CLASSES),
+        dtype=np.float32
+    )
+
+    # ensemble of patches probabilities
+    for k in range(patches_predict.shape[0]):
+        i = k // npatches_horizontal
+        j = k % npatches_horizontal
+        x0, x1 = i * config.TILE_SIZE, (i + 1) * config.TILE_SIZE
+        y0, y1 = j * config.TILE_SIZE, (j + 1) * config.TILE_SIZE
+        prediction[x0:x1, y0:y1, :] = patches_predict[k, :, :, :] * spline
+
+    return prediction[:img_height, :img_width, :]
+    """
+
+
+def predict_batch(x_data, model, config):
+
+    # open rasters and get both data and coordinates
+    rast_shape = x_data[:, :, 0].shape  # shape of the wider scene
+
+    # in memory sliding window predictions
+    wsx, wsy = config.PREDICTOR.PRED_WINDOW_SIZE[0], \
+        config.PREDICTOR.PRED_WINDOW_SIZE[1]
+
+    # if the window size is bigger than the image, predict full image
+    if wsx > rast_shape[0]:
+        wsx = rast_shape[0]
+    if wsy > rast_shape[1]:
+        wsy = rast_shape[1]
+
+    prediction = np.zeros(rast_shape)  # crop out the window
+    print(f'wsize: {wsx}x{wsy}. Prediction shape: {prediction.shape}')
+
+    """
+    for sx in tqdm(range(0, rast_shape[0], wsx)):  # iterate over x-axis
+        for sy in range(0, rast_shape[1], wsy):  # iterate over y-axis
+            x0, x1, y0, y1 = sx, sx + wsx, sy, sy + wsy  # assign window
+            if x1 > rast_shape[0]:  # if selected x exceeds boundary
+                x1 = rast_shape[0]  # assign boundary to x-window
+            if y1 > rast_shape[1]:  # if selected y exceeds boundary
+                y1 = rast_shape[1]  # assign boundary to y-window
+            if x1 - x0 < config.TILE_SIZE:  # if x is smaller than tsize
+                x0 = x1 - config.TILE_SIZE  # assign boundary to -tsize
+            if y1 - y0 < config.TILE_SIZE:  # if selected y is small than tsize
+                y0 = y1 - config.TILE_SIZE  # assign boundary to -tsize
+
+            window = x_data[x0:x1, y0:y1, :].values  # get window
+            window = cp.asarray(window)
+
+            window[window < 0] = 0  # remove lower bound values
+            window[window > 10000] = 10000  # remove higher bound values
+
+            # adding indices
+            # window = cp.transpose(window, (2, 0, 1))
+            # fdi = indices.fdi(
+            #    window, config.PRED_BANDS_INPUT,
+            #    factor=config.INDICES_FACTOR, vtype='int16'
+            # )
+            # si = indices.si(
+            #    window, config.PRED_BANDS_INPUT,
+            #    factor=config.INDICES_FACTOR, vtype='int16'
+            # )
+            # ndwi = indices.ndwi(
+            #    window, config.PRED_BANDS_INPUT,
+            #    factor=config.INDICES_FACTOR, vtype='int16'
+            # )
+            # print(fdi.shape, si.shape, ndwi.shape, window.shape)
+
+            # concatenate all indices
+            # window = cp.concatenate((window, fdi, si, ndwi), axis=0)
+            # window = cp.transpose(window, (1, 2, 0))
+
+            if config.NORMALIZE:
+                window = window / config.normalization_factor
+
+            window = cp.asnumpy(window)
+            print("Window shape", window.shape)
+
+
+            # perform sliding window prediction
+            prediction[x0:x1, y0:y1] = \
+                predict_all(window, model, config, spline=spline)
+
+    return prediction
+    """

@@ -1,9 +1,11 @@
 # ---------------------------------------------------------------------
-# Training detectron2 model for the task of instance segmentation.
+# Predicting detectron2 model for the task of instance segmentation.
 # ---------------------------------------------------------------------
 import os
 import cv2
+import time
 import numpy as np
+import xarray as xr
 import matplotlib.pyplot as plt
 from core.utils import arg_parser
 
@@ -11,8 +13,6 @@ from core.utils import arg_parser
 import torch
 from detectron2.modeling import build_model
 from detectron2.utils.logger import setup_logger
-from detectron2 import model_zoo
-from detectron2.engine import DefaultTrainer
 from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
 from detectron2.utils.visualizer import Visualizer
@@ -95,29 +95,98 @@ def run(cfg):
     """
 
     # Path and directory configurations
-    input_dir = cfg.DATASETS.OUTPUT_DIRECTORY
     cfg.OUTPUT_DIR = cfg.MODEL.OUTPUT_DIRECTORY
-    dataset_name = cfg.DATASETS.COCO_METADATA.DESCRIPTION
-    model_name = cfg.MODEL.MODEL_NAME
-
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 
-    model = build_model(cfg)
+    # setting up model information
+    model_weights = os.path.join(cfg.OUTPUT_DIR, cfg.MODEL.MODEL_NAME)
+    cfg.MODEL.WEIGHTS = model_weights
 
-    model_dict = torch.load(os.path.join(cfg.OUTPUT_DIR, "model_final.pth"), map_location=torch.device('cpu'))
-    model.load_state_dict(model_dict['model'] )
-    model.train(False)
+    # build model and model metadata
+    model = build_model(cfg)  # build architecture and maps
+    model_dict = torch.load(model_weights, map_location=torch.device('cpu'))
+    model.load_state_dict(model_dict['model'])  # load metadata
+    model.train(False)  # we are predicting, weights are already updated
 
+    # Get list of files to predict
+    # TODO: if type is string, glob.glob, else you return the list
+    print(f'Number of files to predict: {len(cfg.PREDICTOR.PRED_FILENAMES)}')
+
+    # Tterate over files and predict them
+    for fname in cfg.PREDICTOR.PRED_FILENAMES:
+
+        # measure execution time
+        start_time = time.perf_counter()
+
+        # path + name to store prediction into
+        save_image = \
+            cfg.OUTPUT_DIR + '/' + fname[:-4].split('/')[-1] + '_pred.tif'
+
+        # --------------------------------------------------------------------------------
+        # if prediction is not on directory, start predicting
+        # (allows for restarting script if it was interrupted at some point)
+        # --------------------------------------------------------------------------------
+        if not os.path.isfile(save_image):
+
+            print(f'Starting to predict {fname}')
+            print(cfg.DATALOADER.DASK_SIZE, type(cfg.DATALOADER.DASK_SIZE))
+            print(save_image)
+            # --------------------------------------------------------------------------------
+            # Extracting and resizing test and validation data
+            # --------------------------------------------------------------------------------
+            x_data = xr.open_rasterio(fname, chunks=cfg.DATALOADER.DASK_SIZE)
+            x_data = x_data.transpose("y", "x", "band")
+            """
+            x_data = x_data[:, :, :4]
+
+            # --------------------------------------------------------------------------------
+            # Calculate missing indices
+            # --------------------------------------------------------------------------------
+
+            # --------------------------------------------------------------------------------
+            # Getting predicted labels
+            # --------------------------------------------------------------------------------
+            os.system('mkdir -p {}'.format(config.PRED_SAVE_DIR))
+            prediction = predict_sliding_binary(x_data, model, config, spline)
+            print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
+
+            prediction = np.squeeze(prediction)
+            prediction[prediction < 0.90] = 0.0
+            prediction[prediction > 0.0] = 1.0
+
+            prediction = prediction.astype(np.int8)  # type to int16
+
+            # --------------------------------------------------------------------------------
+            # Generating visualization from prediction
+            # --------------------------------------------------------------------------------
+            arr_to_tif(raster_f=fname, segments=prediction, out_tif=save_image)
+            np.save(save_segment, prediction)
+            del prediction 
+            """
+
+        # This is the case where the prediction was already saved
+        else:
+            print(f'{save_image} already predicted.')
+
+        print(f'Time: {(time.perf_counter() - start_time)}')
+
+    """
     inLrg = '../../data/TEST/trialrun_data_img_20.png'
-    img = np.transpose(cv2.imread(inLrg),(2,0,1))
+    img = np.transpose(cv2.imread(inLrg), (2, 0, 1))
     img_tensor = torch.from_numpy(img)
 
-    inputs = [{"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}, {"image":img_tensor}]
+    inputs = [
+        {"image": img_tensor}, {"image": img_tensor}, {"image": img_tensor}, 
+        {"image": img_tensor}, {"image": img_tensor}, {"image": img_tensor}, {"image": img_tensor},
+        {"image": img_tensor}, {"image": img_tensor}, {"image": img_tensor}
+    ]
 
     outputs = model(inputs)
     print(outputs)
 
+    predictFileName = os.path.basename('predict.png')
+    file_out = os.path.join(cfg.OUTPUT_DIR, predictFileName)
+    """
 
 if __name__ == "__main__":
 
