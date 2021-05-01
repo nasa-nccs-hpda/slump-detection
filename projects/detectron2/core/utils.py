@@ -5,6 +5,7 @@ import os                            # for os utilities
 import sys                           # for os utilities
 import math                          # for math operations
 from tqdm import tqdm                # for progress bar
+import torch                         # AI backend
 import argparse                      # for arguments parsing
 import datetime                      # for dates manipulation
 import glob                          # for local files manipulation
@@ -273,13 +274,10 @@ def predict_batch(x_data, model, config):
             if y1 - y0 < config.INPUT.MAX_SIZE_TRAIN:  # y smaller than tsize
                 y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
-            window = x_data[:, x0:x1, y0:y1].values  # get window
-            print(window.shape, type(window))
-
-            #window = cp.asarray(window)
-
-            #window[window < 0] = 0  # remove lower bound values
-            #window[window > 10000] = 10000  # remove higher bound values
+            window = torch.from_numpy(x_data[:, x0:x1, y0:y1].values)  # window
+            print(torch.max(window))
+            window[window < 0] = 0  # remove lower bound values
+            window[window > 10000] = 10000  # remove higher bound values
 
             # adding indices
             # window = cp.transpose(window, (2, 0, 1))
