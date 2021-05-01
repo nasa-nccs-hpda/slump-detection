@@ -273,7 +273,7 @@ def predict_batch(x_data, model, config):
             if y1 - y0 < config.INPUT.MAX_SIZE_TRAIN:  # y smaller than tsize
                 y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
-            window = x_data[x0:x1, y0:y1, :].values  # get window
+            #window = x_data[x0:x1, y0:y1, :].values  # get window
             #window = cp.asarray(window)
 
             #window[window < 0] = 0  # remove lower bound values
