@@ -261,7 +261,6 @@ def predict_batch(x_data, model, config):
     prediction = np.zeros(rast_shape)  # crop out the window
     print(f'wsize: {wsx}x{wsy}. Prediction shape: {prediction.shape}')
 
-    """
     for sx in tqdm(range(0, rast_shape[0], wsx)):  # iterate over x-axis
         for sy in range(0, rast_shape[1], wsy):  # iterate over y-axis
             x0, x1, y0, y1 = sx, sx + wsx, sy, sy + wsy  # assign window
@@ -269,16 +268,16 @@ def predict_batch(x_data, model, config):
                 x1 = rast_shape[0]  # assign boundary to x-window
             if y1 > rast_shape[1]:  # if selected y exceeds boundary
                 y1 = rast_shape[1]  # assign boundary to y-window
-            if x1 - x0 < config.TILE_SIZE:  # if x is smaller than tsize
-                x0 = x1 - config.TILE_SIZE  # assign boundary to -tsize
-            if y1 - y0 < config.TILE_SIZE:  # if selected y is small than tsize
-                y0 = y1 - config.TILE_SIZE  # assign boundary to -tsize
+            if x1 - x0 < config.INPUT.MAX_SIZE_TRAIN:  # x smaller than tsize
+                x0 = x1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
+            if y1 - y0 < config.INPUT.MAX_SIZE_TRAIN:  # y smaller than tsize
+                y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
             window = x_data[x0:x1, y0:y1, :].values  # get window
-            window = cp.asarray(window)
+            #window = cp.asarray(window)
 
-            window[window < 0] = 0  # remove lower bound values
-            window[window > 10000] = 10000  # remove higher bound values
+            #window[window < 0] = 0  # remove lower bound values
+            #window[window > 10000] = 10000  # remove higher bound values
 
             # adding indices
             # window = cp.transpose(window, (2, 0, 1))
@@ -300,16 +299,13 @@ def predict_batch(x_data, model, config):
             # window = cp.concatenate((window, fdi, si, ndwi), axis=0)
             # window = cp.transpose(window, (1, 2, 0))
 
-            if config.NORMALIZE:
-                window = window / config.normalization_factor
-
-            window = cp.asnumpy(window)
-            print("Window shape", window.shape)
+            #window = cp.asnumpy(window)
+            #print("Window shape", window.shape)
 
 
             # perform sliding window prediction
-            prediction[x0:x1, y0:y1] = \
-                predict_all(window, model, config, spline=spline)
-
+            #prediction[x0:x1, y0:y1] = \
+            #    predict_all(window, model, config, spline=spline)
+    """
     return prediction
     """
