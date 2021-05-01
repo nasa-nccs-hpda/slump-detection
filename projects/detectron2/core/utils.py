@@ -193,33 +193,34 @@ def predict_windowing(x, model, config):
     print("Entering windowing prediction", x.shape)
 
     n_channels, img_height, img_width = x.shape
+    tile_size = config.INPUT.MAX_SIZE_TRAIN
     print("Inside windowing", img_height, img_width, n_channels)
 
     # make extended img so that it contains integer number of patches
-    #npatches_vertical = math.ceil(img_height / config.TILE_SIZE)
-    #npatches_horizontal = math.ceil(img_width / config.TILE_SIZE)
-    #extended_height = config.TILE_SIZE * npatches_vertical
-    #extended_width = config.TILE_SIZE * npatches_horizontal
-    #ext_x = np.zeros(
-    #    shape=(extended_height, extended_width, n_channels), dtype=np.float32
-    #)
+    npatches_vertical = math.ceil(img_height / tile_size)
+    npatches_horizontal = math.ceil(img_width / tile_size)
+    extended_height = tile_size * npatches_vertical
+    extended_width = tile_size * npatches_horizontal
+    ext_x = np.zeros(
+        shape=(n_channels, extended_height, extended_width), dtype=np.float32
+    )
 
-    """
     # fill extended image with mirrors:
-    ext_x[:img_height, :img_width, :] = x
+    ext_x[:, :img_height, :img_width] = x
     for i in range(img_height, extended_height):
-        ext_x[i, :, :] = ext_x[2 * img_height - i - 1, :, :]
+        ext_x[:, i, :] = ext_x[:, 2 * img_height - i - 1, :]
     for j in range(img_width, extended_width):
-        ext_x[:, j, :] = ext_x[:, 2 * img_width - j - 1, :]
+        ext_x[:, :, j] = ext_x[:, :, 2 * img_width - j - 1]
 
     # now we assemble all patches in one array
     patches_list = []  # do vstack later instead of list
     for i in range(0, npatches_vertical):
         for j in range(0, npatches_horizontal):
-            x0, x1 = i * config.TILE_SIZE, (i + 1) * config.TILE_SIZE
-            y0, y1 = j * config.TILE_SIZE, (j + 1) * config.TILE_SIZE
-            patches_list.append(ext_x[x0:x1, y0:y1, :])
-
+            x0, x1 = i * tile_size, (i + 1) * tile_size
+            y0, y1 = j * tile_size, (j + 1) * tile_size
+            patches_list.append({"image": ext_x[:, x0:x1, y0:y1]})
+    print(patches_list)
+    """
     patches_array = np.asarray(patches_list)
 
     # predictions:
