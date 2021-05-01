@@ -175,7 +175,7 @@ def gen_coco_dataset(
         sys.exit(f'{json_out} already exists. Please remove it and re-run.')
 
 
-def predict_windowing(x, model, config, spline):
+def predict_windowing(x, model, config):
     """
     Predict scene using windowing mechanisms.
     Args:
@@ -195,15 +195,16 @@ def predict_windowing(x, model, config, spline):
     img_height = x.shape[0]
     img_width = x.shape[1]
     n_channels = x.shape[2]
+    print("Inside windowing", img_height, img_width, n_channels)
 
     # make extended img so that it contains integer number of patches
-    npatches_vertical = math.ceil(img_height / config.TILE_SIZE)
-    npatches_horizontal = math.ceil(img_width / config.TILE_SIZE)
-    extended_height = config.TILE_SIZE * npatches_vertical
-    extended_width = config.TILE_SIZE * npatches_horizontal
-    ext_x = np.zeros(
-        shape=(extended_height, extended_width, n_channels), dtype=np.float32
-    )
+    #npatches_vertical = math.ceil(img_height / config.TILE_SIZE)
+    #npatches_horizontal = math.ceil(img_width / config.TILE_SIZE)
+    #extended_height = config.TILE_SIZE * npatches_vertical
+    #extended_width = config.TILE_SIZE * npatches_horizontal
+    #ext_x = np.zeros(
+    #    shape=(extended_height, extended_width, n_channels), dtype=np.float32
+    #)
 
     """
     # fill extended image with mirrors:
@@ -275,18 +276,13 @@ def predict_batch(x_data, model, config):
                 y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
             window = torch.from_numpy(x_data[:, x0:x1, y0:y1].values)  # window
-            print("Max before conversion", torch.max(window))
             window[window < 0] = 0  # remove lower bound values
             window[window > 10000] = 10000  # remove higher bound values
-            print("Max after conversion", torch.max(window))
-
-            #window = cp.asnumpy(window)
-            #print("Window shape", window.shape)
-
 
             # perform sliding window prediction
-            #prediction[x0:x1, y0:y1] = \
-            #    predict_all(window, model, config, spline=spline)
-    """
+            # prediction[x0:x1, y0:y1] = \
+            #    predict_windowing(window, model, config)
+            predict_windowing(window, model, config)
+
     return prediction
-    """
+
