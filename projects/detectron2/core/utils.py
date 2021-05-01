@@ -253,21 +253,21 @@ def predict_batch(x_data, model, config):
         config.PREDICTOR.PRED_WINDOW_SIZE[1]
 
     # if the window size is bigger than the image, predict full image
-    if wsx > rast_shape[1]:
-        wsx = rast_shape[1]
-    if wsy > rast_shape[2]:
-        wsy = rast_shape[2]
+    if wsx > rast_shape[0]:
+        wsx = rast_shape[0]
+    if wsy > rast_shape[1]:
+        wsy = rast_shape[1]
 
     prediction = np.zeros(rast_shape)  # crop out the window
     print(f'wsize: {wsx}x{wsy}. Prediction shape: {prediction.shape}')
 
-    for sx in tqdm(range(0, rast_shape[1], wsx)):  # iterate over x-axis
-        for sy in range(0, rast_shape[2], wsy):  # iterate over y-axis
+    for sx in tqdm(range(0, rast_shape[0], wsx)):  # iterate over x-axis
+        for sy in range(0, rast_shape[1], wsy):  # iterate over y-axis
             x0, x1, y0, y1 = sx, sx + wsx, sy, sy + wsy  # assign window
-            if x1 > rast_shape[1]:  # if selected x exceeds boundary
-                x1 = rast_shape[1]  # assign boundary to x-window
-            if y1 > rast_shape[2]:  # if selected y exceeds boundary
-                y1 = rast_shape[2]  # assign boundary to y-window
+            if x1 > rast_shape[0]:  # if selected x exceeds boundary
+                x1 = rast_shape[0]  # assign boundary to x-window
+            if y1 > rast_shape[1]:  # if selected y exceeds boundary
+                y1 = rast_shape[1]  # assign boundary to y-window
             if x1 - x0 < config.INPUT.MAX_SIZE_TRAIN:  # x smaller than tsize
                 x0 = x1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
             if y1 - y0 < config.INPUT.MAX_SIZE_TRAIN:  # y smaller than tsize
