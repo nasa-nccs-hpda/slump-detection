@@ -246,34 +246,36 @@ def predict_windowing(x, model, config, spline):
 def predict_batch(x_data, model, config):
 
     # open rasters and get both data and coordinates
-    rast_shape = x_data[:, :, 0].shape  # shape of the wider scene
+    rast_shape = x_data[0, :, :].shape  # shape of the wider scene
 
     # in memory sliding window predictions
     wsx, wsy = config.PREDICTOR.PRED_WINDOW_SIZE[0], \
         config.PREDICTOR.PRED_WINDOW_SIZE[1]
 
     # if the window size is bigger than the image, predict full image
-    if wsx > rast_shape[0]:
-        wsx = rast_shape[0]
-    if wsy > rast_shape[1]:
-        wsy = rast_shape[1]
+    if wsx > rast_shape[1]:
+        wsx = rast_shape[1]
+    if wsy > rast_shape[2]:
+        wsy = rast_shape[2]
 
     prediction = np.zeros(rast_shape)  # crop out the window
     print(f'wsize: {wsx}x{wsy}. Prediction shape: {prediction.shape}')
 
-    for sx in tqdm(range(0, rast_shape[0], wsx)):  # iterate over x-axis
-        for sy in range(0, rast_shape[1], wsy):  # iterate over y-axis
+    for sx in tqdm(range(0, rast_shape[1], wsx)):  # iterate over x-axis
+        for sy in range(0, rast_shape[2], wsy):  # iterate over y-axis
             x0, x1, y0, y1 = sx, sx + wsx, sy, sy + wsy  # assign window
-            if x1 > rast_shape[0]:  # if selected x exceeds boundary
-                x1 = rast_shape[0]  # assign boundary to x-window
-            if y1 > rast_shape[1]:  # if selected y exceeds boundary
-                y1 = rast_shape[1]  # assign boundary to y-window
+            if x1 > rast_shape[1]:  # if selected x exceeds boundary
+                x1 = rast_shape[1]  # assign boundary to x-window
+            if y1 > rast_shape[2]:  # if selected y exceeds boundary
+                y1 = rast_shape[2]  # assign boundary to y-window
             if x1 - x0 < config.INPUT.MAX_SIZE_TRAIN:  # x smaller than tsize
                 x0 = x1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
             if y1 - y0 < config.INPUT.MAX_SIZE_TRAIN:  # y smaller than tsize
                 y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
-            #window = x_data[x0:x1, y0:y1, :].values  # get window
+            window = x_data[:, x0:x1, y0:y1].values  # get window
+            print(window.shape, type(window))
+
             #window = cp.asarray(window)
 
             #window[window < 0] = 0  # remove lower bound values
