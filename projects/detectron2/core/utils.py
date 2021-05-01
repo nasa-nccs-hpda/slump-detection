@@ -278,7 +278,7 @@ def predict_batch(x_data, model, config):
             print(torch.max(window))
             window[window < 0] = 0  # remove lower bound values
             window[window > 10000] = 10000  # remove higher bound values
-
+            print(torch.max(window))
             # adding indices
             # window = cp.transpose(window, (2, 0, 1))
             # fdi = indices.fdi(
