@@ -192,9 +192,7 @@ def predict_windowing(x, model, config):
     """
     print("Entering windowing prediction", x.shape)
 
-    img_height = x.shape[0]
-    img_width = x.shape[1]
-    n_channels = x.shape[2]
+    n_channels, img_height, img_width = x.shape
     print("Inside windowing", img_height, img_width, n_channels)
 
     # make extended img so that it contains integer number of patches
