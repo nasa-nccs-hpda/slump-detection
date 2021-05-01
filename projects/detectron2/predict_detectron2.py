@@ -139,7 +139,7 @@ def run(cfg):
                 x_data, cfg.INPUT.INPUT_BANDS, cfg.INPUT.OUTPUT_BANDS
             )
             # x_data = x_data.transpose("y", "x", "band")
-            print(x_data.shape, type(x_data))
+            print(x_data.shape, type(x_data), x_data.sizes)
 
             # --------------------------------------------------------------------------------
             # Calculate missing indices
