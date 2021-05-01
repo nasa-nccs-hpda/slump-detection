@@ -7,7 +7,7 @@ import time
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
-from core.utils import arg_parser, get_bands
+from core.utils import arg_parser, get_bands, predict_batch
 
 # import some common detectron2 utilities
 import torch
@@ -140,7 +140,6 @@ def run(cfg):
                 x_data, cfg.INPUT.INPUT_BANDS, cfg.INPUT.OUTPUT_BANDS
             )
             print(x_data.shape, type(x_data))
-            """
 
             # --------------------------------------------------------------------------------
             # Calculate missing indices
@@ -149,9 +148,12 @@ def run(cfg):
             # --------------------------------------------------------------------------------
             # Getting predicted labels
             # --------------------------------------------------------------------------------
-            prediction = predict_sliding_binary(x_data, model, config, spline)
-            print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
+            # ME QUEDE AQUI
+            prediction = predict_batch(x_data=x_data, model=model, config=cfg)
+            
+            #print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
 
+            """
             prediction = np.squeeze(prediction)
             prediction[prediction < 0.90] = 0.0
             prediction[prediction > 0.0] = 1.0
@@ -189,6 +191,7 @@ def run(cfg):
     predictFileName = os.path.basename('predict.png')
     file_out = os.path.join(cfg.OUTPUT_DIR, predictFileName)
     """
+
 
 if __name__ == "__main__":
 
