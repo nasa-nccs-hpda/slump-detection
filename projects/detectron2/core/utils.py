@@ -275,29 +275,10 @@ def predict_batch(x_data, model, config):
                 y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
             window = torch.from_numpy(x_data[:, x0:x1, y0:y1].values)  # window
-            print(torch.max(window))
+            print("Max before conversion", torch.max(window))
             window[window < 0] = 0  # remove lower bound values
             window[window > 10000] = 10000  # remove higher bound values
-            print(torch.max(window))
-            # adding indices
-            # window = cp.transpose(window, (2, 0, 1))
-            # fdi = indices.fdi(
-            #    window, config.PRED_BANDS_INPUT,
-            #    factor=config.INDICES_FACTOR, vtype='int16'
-            # )
-            # si = indices.si(
-            #    window, config.PRED_BANDS_INPUT,
-            #    factor=config.INDICES_FACTOR, vtype='int16'
-            # )
-            # ndwi = indices.ndwi(
-            #    window, config.PRED_BANDS_INPUT,
-            #    factor=config.INDICES_FACTOR, vtype='int16'
-            # )
-            # print(fdi.shape, si.shape, ndwi.shape, window.shape)
-
-            # concatenate all indices
-            # window = cp.concatenate((window, fdi, si, ndwi), axis=0)
-            # window = cp.transpose(window, (1, 2, 0))
+            print("Max after conversion", torch.max(window))
 
             #window = cp.asnumpy(window)
             #print("Window shape", window.shape)
