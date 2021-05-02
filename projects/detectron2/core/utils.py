@@ -202,7 +202,7 @@ def predict_windowing(x, model, config):
     extended_height = tile_size * npatches_vertical
     extended_width = tile_size * npatches_horizontal
     ext_x = torch.zeros(
-        n_channels, extended_height, extended_width, device=torch.device.cpu
+        n_channels, extended_height, extended_width, device=torch.device('cpu')
     )
 
     # fill extended image with mirrors:
