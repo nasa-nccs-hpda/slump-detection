@@ -202,9 +202,6 @@ def predict_windowing(x, model, config):
     extended_height = tile_size * npatches_vertical
     extended_width = tile_size * npatches_horizontal
 
-    n_gpu = torch.cuda.device_count()
-    print(n_gpu)
-
     ext_x = torch.zeros(n_channels, extended_height, extended_width, dtype=torch.float16)
     print(ext_x.dtype)
 
@@ -224,7 +221,7 @@ def predict_windowing(x, model, config):
             patches_list.append({"image": ext_x[:, x0:x1, y0:y1]})
     # print(patches_list)
 
-    patches_predict = model(patches_list)
+    patches_list = model(patches_list)
 
     prediction = np.zeros(
         shape=(
