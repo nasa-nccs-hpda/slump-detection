@@ -222,11 +222,11 @@ def predict_windowing(x, model, config):
             y0, y1 = j * tile_size, (j + 1) * tile_size
             patches_list.append({"image": ext_x[:, x0:x1, y0:y1]})
     # print(patches_list)
-    """
+
     outputs = model(patches_list)
     print(outputs)
     print(type(outputs), type(outputs[0]))
-    """
+
     """
     patches_array = np.asarray(patches_list)
 
