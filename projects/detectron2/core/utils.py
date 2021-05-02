@@ -206,8 +206,8 @@ def predict_windowing(x, model, config):
     print(n_gpu)
 
     ext_x = torch.zeros(
-        n_channels, extended_height, extended_width, device=torch.device('cpu')
-    )
+        n_channels, extended_height, extended_width)#, device=torch.device('cpu')
+    #)
 
     """
     # fill extended image with mirrors:
