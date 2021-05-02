@@ -195,7 +195,7 @@ def predict_windowing(x, model, config):
 
     n_channels, img_height, img_width = x.shape
     tile_size = config.INPUT.MAX_SIZE_TRAIN
-    print("Inside windowing", img_height, img_width, n_channels, x.dtype)
+    #print("Inside windowing", img_height, img_width, n_channels, x.dtype)
 
     # make extended img so that it contains integer number of patches
     npatches_vertical = math.ceil(img_height / tile_size)
@@ -227,6 +227,7 @@ def predict_windowing(x, model, config):
         shape=(extended_height, extended_width),
         dtype=np.float16
     )
+    print("prediction shape", prediction.shape)
 
     # prediction = np.zeros(
     #     shape=(
@@ -249,9 +250,9 @@ def predict_windowing(x, model, config):
         
         for bin in patches_list[k]['instances'].pred_masks.to('cpu'):
             
-            prediction[x0:x1, y0:y1] += bin.numpy()
+            prediction[x0:x1, y0:y1] += bin.numpy().astype(int)
     
-    return prediction  # [:img_height, :img_width]
+    return prediction[:img_height, :img_width]
     
     """
 
@@ -316,16 +317,13 @@ def predict_sliding(x, model, config):
 
     print(f'{tile_cols} x {tile_rows} prediction tiles @ stride {stride} px')
 
-    full_probs = np.zeros(
-        (x.shape[1], x.shape[2], config.MODEL.ROI_HEADS.NUM_CLASSES)
-    )
-
-    count_predictions = \
-        np.zeros((x.shape[1], x.shape[2], config.MODEL.ROI_HEADS.NUM_CLASSES))
+    full_probs = np.zeros((x.shape[1], x.shape[2]))
+    count_predictions = np.zeros((x.shape[1], x.shape[2]))
 
     tile_counter = 0
     for row in range(tile_rows):
         for col in range(tile_cols):
+            
             x1 = int(col * stride)
             y1 = int(row * stride)
             x2 = min(x1 + tile_size, x.shape[2])
@@ -337,16 +335,16 @@ def predict_sliding(x, model, config):
             padded_img = pad_image(img, tile_size)
             tile_counter += 1
 
-            padded_img = np.expand_dims(padded_img, 0)
-            imgn = padded_img
+            #padded_img = np.expand_dims(padded_img, 0)
+            #imgn = padded_img
 
-            padded_prediction = model.predict(imgn)[0]
-            prediction = padded_prediction[0:img.shape[0], 0:img.shape[1], :]
-            count_predictions[y1:y2, x1:x2] += 1
-            full_probs[y1:y2, x1:x2] += prediction
+            #padded_prediction = model.predict(imgn)[0]
+            #prediction = padded_prediction[:, 0:img.shape[1], 0:img.shape[2]]
+            #count_predictions[y1:y2, x1:x2] += 1
+            #full_probs[y1:y2, x1:x2] += prediction
 
     # average the predictions in the overlapping regions
-    full_probs /= count_predictions
+    #full_probs /= count_predictions
     return full_probs
 
 
