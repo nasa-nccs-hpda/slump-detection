@@ -333,7 +333,7 @@ def predict_sliding(x, model, config):
             print(x1, y1, x2, y2)
 
             img = x[y1:y2, x1:x2]
-            padded_img = pad_image(img, tile_size)
+            #padded_img = pad_image(img, tile_size)
             tile_counter += 1
 
             #padded_img = np.expand_dims(padded_img, 0)
@@ -342,7 +342,7 @@ def predict_sliding(x, model, config):
             #padded_prediction = model.predict(imgn)[0]
             #prediction = padded_prediction[:, 0:img.shape[1], 0:img.shape[2]]
             count_predictions[y1:y2, x1:x2] += 1
-            instances = model([{"image": padded_img}])
+            instances = model([{"image": img}])
             for bin in instances['instances'].pred_masks.to('cpu'):
                 full_probs[y1:y2, x1:x2] += bin.numpy().astype(int)
 
