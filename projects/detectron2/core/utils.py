@@ -224,7 +224,7 @@ def predict_windowing(x, model, config):
 
     prediction = np.zeros(
         shape=(
-            extended_height, extended_width, config.MODEL.ROI_HEADS.NUM_CLASSES
+            config.MODEL.ROI_HEADS.NUM_CLASSES, extended_height, extended_width
         ),
         dtype=np.float16
     )
@@ -233,15 +233,18 @@ def predict_windowing(x, model, config):
     print(len(patches_list[0]['instances'].pred_masks))
     print(type(patches_list[0]['instances'].pred_masks), patches_list[0]['instances'].pred_masks.shape)
 
+    for k in range(len(patches_list)):
+        
+        # print(patches_list[k]['instances'])
+        i = k // npatches_horizontal
+        j = k % npatches_horizontal
+        x0, x1 = i * tile_size, (i + 1) * tile_size
+        y0, y1 = j * tile_size, (j + 1) * tile_size
+        
+        for bin in patches_list[k]['instances'].pred_masks.to('cpu'):
+            
+            prediction[:, x0:x1, y0:y1] += bin.numpy()
 
-
-    #for k in range(len(patches_list)):
-    #    print(patches_list[k]['instances'])
-    #    #i = k // npatches_horizontal
-    #    #j = k % npatches_horizontal
-    #    #x0, x1 = i * tile_size, (i + 1) * tile_size
-    #    #y0, y1 = j * tile_size, (j + 1) * tile_size
-    #    #prediction[x0:x1, y0:y1, :] = patches_predict[k, :, :, :] * spline
     """
 
     # ensemble of patches probabilities
