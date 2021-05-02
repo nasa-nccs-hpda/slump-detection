@@ -340,11 +340,14 @@ def predict_sliding(x, model, config):
 
             #padded_prediction = model.predict(imgn)[0]
             #prediction = padded_prediction[:, 0:img.shape[1], 0:img.shape[2]]
-            #count_predictions[y1:y2, x1:x2] += 1
-            #full_probs[y1:y2, x1:x2] += prediction
+            count_predictions[y1:y2, x1:x2] += 1
+            instances = model([{"image": padded_img}])
+            for bin in instances['instances'].pred_masks.to('cpu'):
+                full_probs[y1:y2, x1:x2] += bin.numpy().astype(int)
 
     # average the predictions in the overlapping regions
-    #full_probs /= count_predictions
+    print(full_probs.shape, full_probs.min(), full_probs.max())
+    full_probs /= count_predictions
     return full_probs
 
 
@@ -383,8 +386,8 @@ def predict_batch(x_data, model, config):
             window[window > 10000] = 10000  # remove higher bound values
 
             # perform sliding window prediction
-            prediction[x0:x1, y0:y1] = \
-                predict_windowing(window, model, config)
+            prediction[x0:x1, y0:y1] = predict_sliding(window, model, config)
+            # predict_windowing(window, model, config)
             # predict_windowing(window, model, config)
 
     return prediction
