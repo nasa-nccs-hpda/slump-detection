@@ -213,7 +213,7 @@ def predict_windowing(x, model, config):
         ext_x[:, i, :] = ext_x[:, 2 * img_height - i - 1, :]
     for j in range(img_width, extended_width):
         ext_x[:, :, j] = ext_x[:, :, 2 * img_width - j - 1]
-    """
+
     # now we assemble all patches in one array
     patches_list = []  # do vstack later instead of list
     for i in range(0, npatches_vertical):
@@ -222,7 +222,7 @@ def predict_windowing(x, model, config):
             y0, y1 = j * tile_size, (j + 1) * tile_size
             patches_list.append({"image": ext_x[:, x0:x1, y0:y1]})
     # print(patches_list)
-
+    """
     outputs = model(patches_list)
     print(outputs)
     print(type(outputs), type(outputs[0]))
