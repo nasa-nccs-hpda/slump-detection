@@ -231,7 +231,7 @@ def predict_windowing(x, model, config):
 
     print(patches_list[0]['instances'].pred_masks)
     print(len(patches_list[0]['instances'].pred_masks))
-    print(type(patches_list[0]['instances'].pred_masks))
+    print(type(patches_list[0]['instances'].pred_masks), patches_list[0]['instances'].pred_masks.shape)
 
 
 
