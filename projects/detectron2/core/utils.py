@@ -314,22 +314,23 @@ def predict_sliding(x, model, config):
     tile_cols = max(
         int(math.ceil((x.shape[2] - tile_size) / stride) + 1), 1
     )  # strided convolution formula
-
     print(f'{tile_cols} x {tile_rows} prediction tiles @ stride {stride} px')
 
     full_probs = np.zeros((x.shape[1], x.shape[2]))
     count_predictions = np.zeros((x.shape[1], x.shape[2]))
+    print("Count and full probs: ", full_probs.shape, count_predictions.shape)
 
     tile_counter = 0
     for row in range(tile_rows):
         for col in range(tile_cols):
-            
+
             x1 = int(col * stride)
             y1 = int(row * stride)
             x2 = min(x1 + tile_size, x.shape[2])
             y2 = min(y1 + tile_size, x.shape[1])
             x1 = max(int(x2 - tile_size), 0)
             y1 = max(int(y2 - tile_size), 0)
+            print(x1, y1, x2, y2)
 
             img = x[y1:y2, x1:x2]
             padded_img = pad_image(img, tile_size)
