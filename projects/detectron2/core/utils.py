@@ -201,9 +201,7 @@ def predict_windowing(x, model, config):
     npatches_horizontal = math.ceil(img_width / tile_size)
     extended_height = tile_size * npatches_vertical
     extended_width = tile_size * npatches_horizontal
-    ext_x = torch.zeros(
-        shape=(n_channels, extended_height, extended_width), dtype=torch.float32
-    )
+    ext_x = torch.zeros(n_channels, extended_height, extended_width)
 
     # fill extended image with mirrors:
     ext_x[:, :img_height, :img_width] = x
@@ -223,6 +221,8 @@ def predict_windowing(x, model, config):
 
     outputs = model(patches_list)
     print(outputs)
+    print(type(outputs), type(outputs[0]))
+    
     """
     patches_array = np.asarray(patches_list)
 
