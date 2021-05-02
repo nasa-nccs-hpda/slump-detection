@@ -205,19 +205,15 @@ def predict_windowing(x, model, config):
     n_gpu = torch.cuda.device_count()
     print(n_gpu)
 
-    ext_x = torch.zeros(
-        n_channels, extended_height, extended_width)#, device=torch.device('cpu')
-    #)
-
+    ext_x = torch.zeros(n_channels, extended_height, extended_width)
 
     # fill extended image with mirrors:
     ext_x[:, :img_height, :img_width] = x
-    """
     for i in range(img_height, extended_height):
         ext_x[:, i, :] = ext_x[:, 2 * img_height - i - 1, :]
     for j in range(img_width, extended_width):
         ext_x[:, :, j] = ext_x[:, :, 2 * img_width - j - 1]
-
+    """
     # now we assemble all patches in one array
     patches_list = []  # do vstack later instead of list
     for i in range(0, npatches_vertical):
