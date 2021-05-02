@@ -102,6 +102,10 @@ def run(cfg):
 
     # build model and model metadata
     model = build_model(cfg)  # build architecture and maps
+
+    import torch.nn as nn
+    model = nn.DataParallel(model)
+
     model_dict = torch.load(model_weights, map_location=torch.device('cpu'))
     model.load_state_dict(model_dict['model'])  # load metadata
     model.train(False)  # we are predicting, weights are already updated
