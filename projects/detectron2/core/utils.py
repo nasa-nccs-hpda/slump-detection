@@ -346,12 +346,12 @@ def predict_sliding(x, model, config):
             instances = model([{"image": img}])
             print(type(instances))
 
-            for bin in instances['instances'].pred_masks.to('cpu'):
+            for bin in instances[0]['instances'].pred_masks.to('cpu'):
                 full_probs[y1:y2, x1:x2] += bin.numpy().astype(int)
 
     # average the predictions in the overlapping regions
     print(full_probs.shape, full_probs.min(), full_probs.max())
-    full_probs /= count_predictions
+    #full_probs /= count_predictions
     return full_probs
 
 
