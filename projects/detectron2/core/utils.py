@@ -229,9 +229,9 @@ def predict_windowing(x, model, config):
         dtype=np.float16
     )
 
-    print(patches_list[0]['instances'].pred_masks)
-    print(len(patches_list[0]['instances'].pred_masks))
-    print(type(patches_list[0]['instances'].pred_masks), patches_list[0]['instances'].pred_masks.shape)
+    # print(patches_list[0]['instances'].pred_masks)
+    # print(len(patches_list[0]['instances'].pred_masks))
+    # print(type(patches_list[0]['instances'].pred_masks), patches_list[0]['instances'].pred_masks.shape)
 
     for k in range(len(patches_list)):
         
@@ -244,7 +244,9 @@ def predict_windowing(x, model, config):
         for bin in patches_list[k]['instances'].pred_masks.to('cpu'):
             
             prediction[:, x0:x1, y0:y1] += bin.numpy()
-
+    
+    return prediction[:, :img_height, :img_width]
+    
     """
 
     # ensemble of patches probabilities
@@ -255,7 +257,7 @@ def predict_windowing(x, model, config):
         y0, y1 = j * config.TILE_SIZE, (j + 1) * config.TILE_SIZE
         prediction[x0:x1, y0:y1, :] = patches_predict[k, :, :, :] * spline
 
-    return prediction[:img_height, :img_width, :]
+    return prediction[:, :img_height, :img_width]
     """
 
 
@@ -294,9 +296,9 @@ def predict_batch(x_data, model, config):
             window[window > 10000] = 10000  # remove higher bound values
 
             # perform sliding window prediction
-            # prediction[x0:x1, y0:y1] = \
-            #    predict_windowing(window, model, config)
-            predict_windowing(window, model, config)
+            prediction[x0:x1, y0:y1] = \
+                predict_windowing(window, model, config)
+            # predict_windowing(window, model, config)
 
     return prediction
 
