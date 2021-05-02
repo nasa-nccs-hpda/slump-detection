@@ -224,11 +224,16 @@ def predict_windowing(x, model, config):
     patches_list = model(patches_list)
 
     prediction = np.zeros(
-        shape=(
-            config.MODEL.ROI_HEADS.NUM_CLASSES, extended_height, extended_width
-        ),
+        shape=(extended_height, extended_width),
         dtype=np.float16
     )
+
+    # prediction = np.zeros(
+    #     shape=(
+    #         config.MODEL.ROI_HEADS.NUM_CLASSES, extended_height, extended_width
+    #     ),
+    #     dtype=np.float16
+    # )
 
     # print(patches_list[0]['instances'].pred_masks)
     # print(len(patches_list[0]['instances'].pred_masks))
@@ -244,9 +249,9 @@ def predict_windowing(x, model, config):
         
         for bin in patches_list[k]['instances'].pred_masks.to('cpu'):
             
-            prediction[:, x0:x1, y0:y1] += bin.numpy()
+            prediction[x0:x1, y0:y1] += bin.numpy()
     
-    return prediction[:, :img_height, :img_width]
+    return prediction  # [:img_height, :img_width]
     
     """
 
@@ -260,6 +265,89 @@ def predict_windowing(x, model, config):
 
     return prediction[:, :img_height, :img_width]
     """
+
+
+def pad_image(img, target_size):
+    """
+    Pad an image up to the target size.
+    Args:
+        img (numpy.arry): image array
+        target_size (int): image target size
+    Return:
+        padded image array
+    ----------
+    Example
+    ----------
+        pad_image(img, target_size=256)
+    """
+    rows_missing = target_size - img.shape[1]
+    cols_missing = target_size - img.shape[2]
+    padded_img = np.pad(
+        img, ((0, 0), (0, rows_missing), (0, cols_missing)), 'constant'
+    )
+    return padded_img
+
+
+def predict_sliding(x, model, config):
+    """
+    Predict scene using sliding windows.
+    Args:
+        x (numpy.array): image array
+        model (tf h5): image target size
+        config (Config):
+        spline (numpy.array):
+    Return:
+        prediction scene array probabilities
+    ----------
+    Example
+    ----------
+        predict_windowing(x, model, config, spline)
+    """
+    tile_size = config.INPUT.MAX_SIZE_TRAIN
+    stride = math.ceil(tile_size * (1 - 0.20))
+
+    tile_rows = max(
+        int(math.ceil((x.shape[1] - tile_size) / stride) + 1), 1
+    )  # strided convolution formula
+
+    tile_cols = max(
+        int(math.ceil((x.shape[2] - tile_size) / stride) + 1), 1
+    )  # strided convolution formula
+
+    print(f'{tile_cols} x {tile_rows} prediction tiles @ stride {stride} px')
+
+    full_probs = np.zeros(
+        (x.shape[1], x.shape[2], config.MODEL.ROI_HEADS.NUM_CLASSES)
+    )
+
+    count_predictions = \
+        np.zeros((x.shape[1], x.shape[2], config.MODEL.ROI_HEADS.NUM_CLASSES))
+
+    tile_counter = 0
+    for row in range(tile_rows):
+        for col in range(tile_cols):
+            x1 = int(col * stride)
+            y1 = int(row * stride)
+            x2 = min(x1 + tile_size, x.shape[2])
+            y2 = min(y1 + tile_size, x.shape[1])
+            x1 = max(int(x2 - tile_size), 0)
+            y1 = max(int(y2 - tile_size), 0)
+
+            img = x[y1:y2, x1:x2]
+            padded_img = pad_image(img, tile_size)
+            tile_counter += 1
+
+            padded_img = np.expand_dims(padded_img, 0)
+            imgn = padded_img
+
+            padded_prediction = model.predict(imgn)[0]
+            prediction = padded_prediction[0:img.shape[0], 0:img.shape[1], :]
+            count_predictions[y1:y2, x1:x2] += 1
+            full_probs[y1:y2, x1:x2] += prediction
+
+    # average the predictions in the overlapping regions
+    full_probs /= count_predictions
+    return full_probs
 
 
 def predict_batch(x_data, model, config):
