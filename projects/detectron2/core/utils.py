@@ -223,21 +223,19 @@ def predict_windowing(x, model, config):
             patches_list.append({"image": ext_x[:, x0:x1, y0:y1]})
     # print(patches_list)
 
-    outputs = model(patches_list)
-    print(outputs)
-    print(type(outputs), type(outputs[0]))
-
-    """
-    patches_array = np.asarray(patches_list)
-
-    # predictions:
-    patches_predict = \
-        model.predict(patches_array, batch_size=config.PRED_BATCH_SIZE)
+    patches_predict = model(patches_list)
 
     prediction = np.zeros(
-        shape=(extended_height, extended_width, config.N_CLASSES),
-        dtype=np.float32
+        shape=(
+            extended_height, extended_width, config.MODEL.ROI_HEADS.NUM_CLASSES
+        ),
+        dtype=np.float16
     )
+    
+    # print(outputs)
+    # print(type(outputs), type(outputs[0]))
+
+    """
 
     # ensemble of patches probabilities
     for k in range(patches_predict.shape[0]):

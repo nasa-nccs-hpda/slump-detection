@@ -82,7 +82,7 @@ SOLVER:
 # PREDICTOR
 # -------------------------------------------------------------------------
 PREDICTOR:
-  PRED_WINDOW_SIZE: [3000, 3000]
+  PRED_WINDOW_SIZE: [4000, 4000]
   PRED_FILENAMES:
     - /gpfsm/ccds01/nobackup/temp/jacaraba/vhr-cloudmask/data/WV02_20160709_M1BS_10300100591D6600-toa_pansharpen.tif
 

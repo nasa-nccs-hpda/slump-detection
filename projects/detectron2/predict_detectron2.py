@@ -102,14 +102,12 @@ def run(cfg):
 
     # build model and model metadata
     model = build_model(cfg)  # build architecture and maps
-
-    import torch.nn as nn
-
     model_dict = torch.load(model_weights, map_location=torch.device('cpu'))
     model.load_state_dict(model_dict['model'])  # load metadata
-
-    #model = nn.DataParallel(model)
-
+    
+    # TODO: In a later version, parellize the model over several GPUs.
+    # import torch.nn as nn
+    # model = nn.DataParallel(model)
 
     model.train(False)  # we are predicting, weights are already updated
 
@@ -155,8 +153,7 @@ def run(cfg):
             # --------------------------------------------------------------------------------
             # ME QUEDE AQUI
             prediction = predict_batch(x_data=x_data, model=model, config=cfg)
-            
-            #print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
+            print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
 
             """
             prediction = np.squeeze(prediction)
