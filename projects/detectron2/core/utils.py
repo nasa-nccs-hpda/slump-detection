@@ -209,9 +209,10 @@ def predict_windowing(x, model, config):
         n_channels, extended_height, extended_width)#, device=torch.device('cpu')
     #)
 
-    """
+
     # fill extended image with mirrors:
     ext_x[:, :img_height, :img_width] = x
+    """
     for i in range(img_height, extended_height):
         ext_x[:, i, :] = ext_x[:, 2 * img_height - i - 1, :]
     for j in range(img_width, extended_width):
