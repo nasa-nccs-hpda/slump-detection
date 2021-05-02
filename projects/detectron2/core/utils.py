@@ -220,9 +220,7 @@ def predict_windowing(x, model, config):
             x0, x1 = i * tile_size, (i + 1) * tile_size
             y0, y1 = j * tile_size, (j + 1) * tile_size
             patches_list.append({"image": ext_x[:, x0:x1, y0:y1]})
-    print("Number of patches: ", len(patches_list))
     patches_list = model(patches_list)
-    print("Number of patches: ", len(patches_list))
 
     prediction = np.zeros(
         shape=(
@@ -230,9 +228,12 @@ def predict_windowing(x, model, config):
         ),
         dtype=np.float16
     )
-    
-    # print(outputs)
-    # print(type(outputs), type(outputs[0]))
+
+    print(patches_list[0]['instances'].pred_masks)
+    print(len(patches_list[0]['instances'].pred_masks))
+    print(type(patches_list[0]['instances'].pred_masks))
+
+
 
     #for k in range(len(patches_list)):
     #    print(patches_list[k]['instances'])
