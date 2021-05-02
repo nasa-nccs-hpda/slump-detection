@@ -201,7 +201,7 @@ def predict_windowing(x, model, config):
     npatches_horizontal = math.ceil(img_width / tile_size)
     extended_height = tile_size * npatches_vertical
     extended_width = tile_size * npatches_horizontal
-    
+
     n_gpu = torch.cuda.device_count()
     print(n_gpu)
 

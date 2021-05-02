@@ -21,8 +21,6 @@ from detectron2.data.datasets import register_coco_instances
 from detectron2.utils.visualizer import ColorMode
 
 setup_logger()
-os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-
 
 def run(cfg):
     """
@@ -207,6 +205,11 @@ if __name__ == "__main__":
     cfg.set_new_allowed(True)  # allow for new configuration objects
     cfg.INPUT.MIN_SIZE_TRAIN = 256  # small hack to allow merging new fields
     cfg.merge_from_file(args.config_filename)  # merge from file
+
+    # ---------------------------------------------------------------------------
+    # Set GPU devices
+    # ---------------------------------------------------------------------------
+    os.environ['CUDA_VISIBLE_DEVICES'] = cfg.SOLVER.CUDA_DEVICES
 
     # ---------------------------------------------------------------------------
     # Run the main
