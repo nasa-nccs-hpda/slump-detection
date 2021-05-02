@@ -13,6 +13,7 @@ import json                          # for json handling
 import random                        # for random integers
 import numpy as np                   # for arrays modifications
 import imageio                       # for managing images
+import rasterio as rio               # for geospational processing
 from core import pycococreatortools  # for coco utilities
 from PIL import Image                # for managing images
 
@@ -302,3 +303,41 @@ def predict_batch(x_data, model, config):
 
     return prediction
 
+
+def arr_to_tif(raster_f, segments, out_tif='segment.tif', ndval=-9999):
+    """
+    Save array into GeoTIF file.
+    Args:
+        raster_f (str): input data filename
+        segments (numpy.array): array with values
+        out_tif (str): output filename
+        ndval (int): no data value
+    Return:
+        save GeoTif to local disk
+    ----------
+    Example
+    ----------
+        arr_to_tif('inp.tif', segments, 'out.tif', ndval=-9999)
+    """
+    # get geospatial profile, will apply for output file
+    with rio.open(raster_f) as src:
+        meta = src.profile
+        nodatavals = src.read_masks(1).astype('int16')
+    print(meta)
+
+    # load numpy array if file is given
+    if type(segments) == str:
+        segments = np.load(segments)
+    segments = segments.astype('int16')
+    print(segments.dtype)  # check datatype
+
+    nodatavals[nodatavals == 0] = ndval
+    segments[nodatavals == ndval] = nodatavals[nodatavals == ndval]
+
+    out_meta = meta  # modify profile based on numpy array
+    out_meta['count'] = 1  # output is single band
+    out_meta['dtype'] = 'int16'  # data type is float64
+
+    # write to a raster
+    with rio.open(out_tif, 'w', **out_meta) as dst:
+        dst.write(segments, 1)

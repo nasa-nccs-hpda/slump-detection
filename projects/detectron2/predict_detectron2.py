@@ -7,7 +7,8 @@ import time
 import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
-from core.utils import arg_parser, get_bands, predict_batch
+from core.utils import arg_parser, get_bands
+from core.utils import predict_batch, arr_to_tif
 
 # import some common detectron2 utilities
 import torch
@@ -152,22 +153,16 @@ def run(cfg):
             # --------------------------------------------------------------------------------
             # ME QUEDE AQUI
             prediction = predict_batch(x_data=x_data, model=model, config=cfg)
-            print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
-
-            """
-            prediction = np.squeeze(prediction)
-            prediction[prediction < 0.90] = 0.0
-            prediction[prediction > 0.0] = 1.0
-
+            # print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
+            prediction[prediction > 1] = 1
             prediction = prediction.astype(np.int8)  # type to int16
 
             # --------------------------------------------------------------------------------
             # Generating visualization from prediction
             # --------------------------------------------------------------------------------
             arr_to_tif(raster_f=fname, segments=prediction, out_tif=save_image)
-            np.save(save_segment, prediction)
-            del prediction 
-            """
+            # np.save(save_segment, prediction)
+            del prediction
 
         # This is the case where the prediction was already saved
         else:
