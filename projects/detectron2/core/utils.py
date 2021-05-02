@@ -194,7 +194,7 @@ def predict_windowing(x, model, config):
 
     n_channels, img_height, img_width = x.shape
     tile_size = config.INPUT.MAX_SIZE_TRAIN
-    print("Inside windowing", img_height, img_width, n_channels)
+    print("Inside windowing", img_height, img_width, n_channels, x.dtype)
 
     # make extended img so that it contains integer number of patches
     npatches_vertical = math.ceil(img_height / tile_size)
@@ -220,8 +220,8 @@ def predict_windowing(x, model, config):
             x0, x1 = i * tile_size, (i + 1) * tile_size
             y0, y1 = j * tile_size, (j + 1) * tile_size
             patches_list.append({"image": ext_x[:, x0:x1, y0:y1]})
+    print("Number of patches: ", len(patches_list))
     patches_list = model(patches_list)
-    print(type(patches_list), len(patches_list))
 
     prediction = np.zeros(
         shape=(
@@ -233,6 +233,13 @@ def predict_windowing(x, model, config):
     # print(outputs)
     # print(type(outputs), type(outputs[0]))
 
+    for k in range(len(patches_list)):
+        print(patches_list[k]['instances'])
+        #i = k // npatches_horizontal
+        #j = k % npatches_horizontal
+        #x0, x1 = i * tile_size, (i + 1) * tile_size
+        #y0, y1 = j * tile_size, (j + 1) * tile_size
+        #prediction[x0:x1, y0:y1, :] = patches_predict[k, :, :, :] * spline
     """
 
     # ensemble of patches probabilities
