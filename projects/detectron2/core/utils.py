@@ -344,7 +344,7 @@ def predict_sliding(x, model, config):
             #prediction = padded_prediction[:, 0:img.shape[1], 0:img.shape[2]]
             count_predictions[y1:y2, x1:x2] += 1
             instances = model([{"image": img}])
-            print(instances)
+            print(type(instances))
 
             for bin in instances['instances'].pred_masks.to('cpu'):
                 full_probs[y1:y2, x1:x2] += bin.numpy().astype(int)
