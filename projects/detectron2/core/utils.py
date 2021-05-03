@@ -390,7 +390,6 @@ def arr_to_tif(raster_f, segments, out_tif='segment.tif', ndval=-9999):
     if type(segments) == str:
         segments = np.load(segments)
     segments = segments.astype('int16')
-    print(segments.dtype)  # check datatype
 
     nodatavals[nodatavals == 0] = ndval
     segments[nodatavals == ndval] = nodatavals[nodatavals == ndval]
