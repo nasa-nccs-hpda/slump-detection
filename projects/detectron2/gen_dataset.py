@@ -37,7 +37,9 @@ def run(cfg):
         print("Image after get_bands: ", image_data.shape, label_data.shape)
 
         # lower resolution here
-        # from skimage.util import img_as_ubyte
+        from skimage.util import img_as_ubyte
+        image_data = img_as_ubyte(image_data)
+
         # from skimage import exposure
         # image_data = exposure.rescale_intensity(
         #   image_data, out_range=(0, 2**31 - 1))
