@@ -354,9 +354,9 @@ def predict_batch(x_data, model, config):
             if y1 - y0 < config.INPUT.MAX_SIZE_TRAIN:  # y smaller than tsize
                 y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
-            window = exposure.rescale_intensity(
-                img_as_ubyte(x_data[:, x0:x1, y0:y1].values)
-            )
+            window = x_data[:, x0:x1, y0:y1].values
+            window[window < 0] = 0
+            window = exposure.rescale_intensity(img_as_ubyte(window))
             window = torch.from_numpy(window)  # window
 
             # perform sliding window prediction
