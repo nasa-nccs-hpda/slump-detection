@@ -390,8 +390,8 @@ def predict_batch(x_data, model, config):
             window[window > 10000] = 10000  # remove higher bound values
 
             # perform sliding window prediction
-            prediction[x0:x1, y0:y1] = predict_sliding(window, model, config)
-            # predict_windowing(window, model, config)
+            # prediction[x0:x1, y0:y1] = predict_sliding(window, model, config)
+            prediction[x0:x1, y0:y1] = predict_windowing(window, model, config)
             # predict_windowing(window, model, config)
 
     return prediction
