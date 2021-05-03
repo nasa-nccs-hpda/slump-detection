@@ -185,7 +185,6 @@ def predict_windowing(x, model, config):
         x (numpy.array): image array
         model (tf h5): image target size
         config (Config):
-        spline (numpy.array):
     Return:
         prediction scene array probabilities
     ----------
@@ -267,13 +266,12 @@ def predict_sliding(x, model, config):
         x (numpy.array): image array
         model (tf h5): image target size
         config (Config):
-        spline (numpy.array):
     Return:
         prediction scene array probabilities
     ----------
     Example
     ----------
-        predict_windowing(x, model, config, spline)
+        predict_windowing(x, model, config)
     """
     tile_size = config.INPUT.MAX_SIZE_TRAIN
     stride = math.ceil(tile_size * (1 - 0.20))
@@ -306,7 +304,6 @@ def predict_sliding(x, model, config):
 
             count_predictions[y1:y2, x1:x2] += 1
             instances = model([{"image": img}])
-            print(type(instances))
 
             for bin in instances[0]['instances'].pred_masks.to('cpu'):
                 full_probs[y1:y2, x1:x2] += bin.numpy().astype(int)
@@ -316,7 +313,19 @@ def predict_sliding(x, model, config):
 
 
 def predict_batch(x_data, model, config):
-
+    """
+    Predict big scene using sliding windows.
+    Args:
+        x_data (numpy.array): image array
+        model (tf h5): image target size
+        config (Config):
+    Return:
+        prediction scene array probabilities
+    ----------
+    Example
+    ----------
+        predict_batch(x, model, config)
+    """
     # open rasters and get both data and coordinates
     rast_shape = x_data[0, :, :].shape  # shape of the wider scene
 
@@ -348,17 +357,11 @@ def predict_batch(x_data, model, config):
             window = exposure.rescale_intensity(
                 img_as_ubyte(x_data[:, x0:x1, y0:y1].values)
             )
-            # print("Before saving ", type(window), window.shape)
-            # imageio.imsave(f'{sx}_{sy}.png', np.moveaxis(window, 0, -1))
-
             window = torch.from_numpy(window)  # window
-            # window[window < 0] = 0  # remove lower bound values
-            # window[window > 10000] = 10000  # remove higher bound values
 
             # perform sliding window prediction
             # prediction[x0:x1, y0:y1] = predict_sliding(window, model, config)
             prediction[x0:x1, y0:y1] = predict_windowing(window, model, config)
-            # predict_windowing(window, model, config)
 
     return prediction
 

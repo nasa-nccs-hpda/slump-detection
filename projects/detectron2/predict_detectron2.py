@@ -79,13 +79,12 @@ def run(cfg):
             # --------------------------------------------------------------------------------
             prediction = predict_batch(x_data=x_data, model=model, config=cfg)
             prediction[prediction > 1] = 1
-            prediction = prediction.astype(np.int8)  # type to int16
+            prediction = prediction.astype(np.int8)  # type to int8
 
             # --------------------------------------------------------------------------------
             # Generating visualization from prediction
             # --------------------------------------------------------------------------------
             arr_to_tif(raster_f=fname, segments=prediction, out_tif=save_image)
-            # np.save(save_segment, prediction)
             del prediction
 
         # This is the case where the prediction was already saved
@@ -113,8 +112,9 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------
     # Set GPU devices
     # ---------------------------------------------------------------------------
-    print(cfg.SOLVER.CUDA_DEVICES, f'{cfg.SOLVER.CUDA_DEVICES}', ','.join(cfg.SOLVER.CUDA_DEVICES))
-    os.environ['CUDA_VISIBLE_DEVICES'] = "0,1,2,3"
+    os.environ['CUDA_VISIBLE_DEVICES'] = ','.join(
+        map(str, cfg.SOLVER.CUDA_DEVICES)
+    )
 
     # ---------------------------------------------------------------------------
     # Run the main
