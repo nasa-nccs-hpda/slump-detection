@@ -193,11 +193,8 @@ def predict_windowing(x, model, config):
     ----------
         predict_windowing(x, model, config, spline)
     """
-    print("Entering windowing prediction", x.shape)
-
     n_channels, img_height, img_width = x.shape
     tile_size = config.INPUT.MAX_SIZE_TRAIN
-    #print("Inside windowing", img_height, img_width, n_channels, x.dtype)
 
     # make extended img so that it contains integer number of patches
     npatches_vertical = math.ceil(img_height / tile_size)
@@ -231,43 +228,16 @@ def predict_windowing(x, model, config):
     )
     print("prediction shape", prediction.shape)
 
-    # prediction = np.zeros(
-    #     shape=(
-    #         config.MODEL.ROI_HEADS.NUM_CLASSES, extended_height, extended_width
-    #     ),
-    #     dtype=np.float16
-    # )
-
-    # print(patches_list[0]['instances'].pred_masks)
-    # print(len(patches_list[0]['instances'].pred_masks))
-    # print(type(patches_list[0]['instances'].pred_masks), patches_list[0]['instances'].pred_masks.shape)
-
     for k in range(len(patches_list)):
-        
         # print(patches_list[k]['instances'])
         i = k // npatches_horizontal
         j = k % npatches_horizontal
         x0, x1 = i * tile_size, (i + 1) * tile_size
         y0, y1 = j * tile_size, (j + 1) * tile_size
-        
+
         for bin in patches_list[k]['instances'].pred_masks.to('cpu'):
-            
             prediction[x0:x1, y0:y1] += bin.numpy().astype(int)
-    
     return prediction[:img_height, :img_width]
-    
-    """
-
-    # ensemble of patches probabilities
-    for k in range(patches_predict.shape[0]):
-        i = k // npatches_horizontal
-        j = k % npatches_horizontal
-        x0, x1 = i * config.TILE_SIZE, (i + 1) * config.TILE_SIZE
-        y0, y1 = j * config.TILE_SIZE, (j + 1) * config.TILE_SIZE
-        prediction[x0:x1, y0:y1, :] = patches_predict[k, :, :, :] * spline
-
-    return prediction[:, :img_height, :img_width]
-    """
 
 
 def pad_image(img, target_size):
@@ -316,11 +286,10 @@ def predict_sliding(x, model, config):
     tile_cols = max(
         int(math.ceil((x.shape[2] - tile_size) / stride) + 1), 1
     )  # strided convolution formula
-    print(f'{tile_cols} x {tile_rows} prediction tiles @ stride {stride} px')
 
+    print(f'{tile_cols} x {tile_rows} prediction tiles @ stride {stride} px')
     full_probs = np.zeros((x.shape[1], x.shape[2]))
     count_predictions = np.zeros((x.shape[1], x.shape[2]))
-    print("Count and full probs: ", full_probs.shape, count_predictions.shape)
 
     tile_counter = 0
     for row in range(tile_rows):
@@ -332,18 +301,10 @@ def predict_sliding(x, model, config):
             y2 = min(y1 + tile_size, x.shape[1])
             x1 = max(int(x2 - tile_size), 0)
             y1 = max(int(y2 - tile_size), 0)
-            print(x1, y1, x2, y2)
 
             img = x[:, y1:y2, x1:x2]
-            #padded_img = pad_image(img, tile_size)
             tile_counter += 1
-            print("img size: ", img.shape)
 
-            #padded_img = np.expand_dims(padded_img, 0)
-            #imgn = padded_img
-
-            #padded_prediction = model.predict(imgn)[0]
-            #prediction = padded_prediction[:, 0:img.shape[1], 0:img.shape[2]]
             count_predictions[y1:y2, x1:x2] += 1
             instances = model([{"image": img}])
             print(type(instances))
@@ -352,8 +313,6 @@ def predict_sliding(x, model, config):
                 full_probs[y1:y2, x1:x2] += bin.numpy().astype(int)
 
     # average the predictions in the overlapping regions
-    print(full_probs.shape, full_probs.min(), full_probs.max())
-    #full_probs /= count_predictions
     return full_probs
 
 
@@ -392,7 +351,7 @@ def predict_batch(x_data, model, config):
             )
             # print("Before saving ", type(window), window.shape)
             # imageio.imsave(f'{sx}_{sy}.png', np.moveaxis(window, 0, -1))
-            
+
             window = torch.from_numpy(window)  # window
             # window[window < 0] = 0  # remove lower bound values
             # window[window > 10000] = 10000  # remove higher bound values
