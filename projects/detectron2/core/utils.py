@@ -226,7 +226,6 @@ def predict_windowing(x, model, config):
         shape=(extended_height, extended_width),
         dtype=np.float16
     )
-    print("prediction shape", prediction.shape)
 
     for k in range(len(patches_list)):
         # print(patches_list[k]['instances'])
