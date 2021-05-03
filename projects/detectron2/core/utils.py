@@ -391,7 +391,7 @@ def predict_batch(x_data, model, config):
                 img_as_ubyte(x_data[:, x0:x1, y0:y1].values)
             )
             print("Before saving ", type(window), window.shape)
-            imageio.imsave(f'{sx}_{sy}.png', window)
+            imageio.imsave(f'{sx}_{sy}.png', np.moveaxis(window, 0, -1))
             window = torch.from_numpy(window)  # window
             # window[window < 0] = 0  # remove lower bound values
             # window[window > 10000] = 10000  # remove higher bound values
