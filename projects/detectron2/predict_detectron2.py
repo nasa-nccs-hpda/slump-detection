@@ -142,6 +142,7 @@ def run(cfg):
             x_data = get_bands(
                 x_data, cfg.INPUT.INPUT_BANDS, cfg.INPUT.OUTPUT_BANDS
             )
+            
             # x_data = x_data.transpose("y", "x", "band")
 
             # --------------------------------------------------------------------------------
