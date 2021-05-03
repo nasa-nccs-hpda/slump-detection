@@ -153,9 +153,10 @@ def run(cfg):
             # --------------------------------------------------------------------------------
             # ME QUEDE AQUI
             prediction = predict_batch(x_data=x_data, model=model, config=cfg)
-            # print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
-            prediction[prediction < 8] = 0
-            prediction[prediction > 7] = 1
+            print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
+            prediction[prediction < 4] = 0
+            prediction[prediction >= 4] = 1
+            print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
             prediction = prediction.astype(np.int8)  # type to int16
 
             # --------------------------------------------------------------------------------
