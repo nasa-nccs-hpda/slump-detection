@@ -390,6 +390,7 @@ def predict_batch(x_data, model, config):
             window = exposure.rescale_intensity(
                 img_as_ubyte(x_data[:, x0:x1, y0:y1].values)
             )
+            print("Before saving ", type(window), window.shape)
             imageio.imsave(f'{sx}_{sy}.png', window)
             window = torch.from_numpy(window)  # window
             # window[window < 0] = 0  # remove lower bound values
