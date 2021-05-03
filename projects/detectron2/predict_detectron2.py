@@ -142,7 +142,7 @@ def run(cfg):
             x_data = get_bands(
                 x_data, cfg.INPUT.INPUT_BANDS, cfg.INPUT.OUTPUT_BANDS
             )
-            
+
             # x_data = x_data.transpose("y", "x", "band")
 
             # --------------------------------------------------------------------------------
@@ -155,8 +155,8 @@ def run(cfg):
             # ME QUEDE AQUI
             prediction = predict_batch(x_data=x_data, model=model, config=cfg)
             print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
-            #prediction[prediction < 2] = 0
-            prediction[prediction > 1] = 1
+            prediction[prediction == 1] = 0
+            prediction[prediction > 2] = 1
             print("Prediction shape", prediction.shape, prediction.min(), prediction.max())
             prediction = prediction.astype(np.int8)  # type to int16
 
