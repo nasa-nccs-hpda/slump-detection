@@ -2,19 +2,23 @@
 # Predicting detectron2 model for the task of instance segmentation.
 # ---------------------------------------------------------------------
 import os
+import glob
 import time
+import torch
 import numpy as np
 import xarray as xr
 from core.utils import arg_parser, get_bands
 from core.utils import predict_batch, arr_to_tif
-
-# import some common detectron2 utilities
-import torch
 from detectron2.modeling import build_model
 from detectron2.utils.logger import setup_logger
 from detectron2.config import get_cfg
 
 setup_logger()
+np.random.seed(22)
+
+__author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
+__email__ = "jordan.a.caraballo-vega@nasa.gov"
+__status__ = "Production"
 
 
 def run(cfg):
@@ -40,7 +44,8 @@ def run(cfg):
     model.train(False)  # we are predicting, weights are already updated
 
     # Get list of files to predict
-    # TODO: if type is string, glob.glob, else you return the list
+    if isinstance(cfg.PREDICTOR.PRED_FILENAMES, str):
+        cfg.PREDICTOR.PRED_FILENAMES = glob.glob(cfg.PREDICTOR.PRED_FILENAMES)
     print(f'Number of files to predict: {len(cfg.PREDICTOR.PRED_FILENAMES)}')
 
     # Tterate over files and predict them

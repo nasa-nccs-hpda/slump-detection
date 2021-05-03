@@ -1,7 +1,6 @@
 # --------------------------------------------------------------------------
 # Extract dataset tiles from label and imagery rasters.
 # --------------------------------------------------------------------------
-import warnings
 import xarray as xr
 from detectron2.config import get_cfg
 from skimage.util import img_as_ubyte
@@ -11,7 +10,6 @@ from core.utils import get_bands, gen_data_png, gen_coco_dataset
 
 import numpy as np
 np.random.seed(22)
-warnings.filterwarnings("ignore")
 
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
 __email__ = "jordan.a.caraballo-vega@nasa.gov"

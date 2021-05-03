@@ -10,7 +10,6 @@ This section includes general configurations that can be extracted as default va
 | :---  | :-----      |
 | \_BASE\_ | points to a main configuration file that has default configurations     |
 
-
 ## INPUT
 
 This section includes configurations related to the data that is being used in the training and generation of the model.
@@ -50,7 +49,9 @@ This section includes configurations related to the data that is being used in t
 | :--- | :-----      |
 |SOLVER.IMS_PER_BATCH| number of images that will be processed concurrently; this value will depend on the GPU memory available, 16 is normally an ok value  |
 |SOLVER.BASE_LR| learning rate for training the model, the higher the learning rate, the more proabable the model will overfit; a value between 0.001-0.0001 is an okay value |
+|SOLVER.STEPS| number of steps per epoch; a value between 200000-300000 is an okay value |
 |SOLVER.MAX_ITER| number of iterations to train the model; this value should be higher than 15 in most cases, monitor the validation loss to account for the best value |
+|SOLVER.CUDA_DEVICES| number of GPU devices |
 
 ## MODEL
 
@@ -69,3 +70,14 @@ This section includes configurations related to the data that is being used in t
 | Option | Description |
 | :--- | :-----      |
 |DATALOADER.FILTER_EMPTY_ANNOTATIONS| remove or not empty annotations from the dataset  |
+|DATALOADER.NUM_WORKERS| parallel workers to train on  |
+|DATALOADER.DASK_SIZE.band| number of bands channels to map into memory  |
+|DATALOADER.DASK_SIZE.x| height dimension to map into memory  |
+|DATALOADER.DASK_SIZE.y| width dimension to map into memory  |
+
+## PREDICTOR
+
+| Option | Description |
+| :--- | :-----      |
+|PREDICTOR.PRED_WINDOW_SIZE| list for windows dimensions for predictions |
+|PREDICTOR.PRED_FILENAMES| list of files to predict, with a *, will predict all files that match pattern |
