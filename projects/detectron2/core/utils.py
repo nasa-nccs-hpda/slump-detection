@@ -385,7 +385,6 @@ def arr_to_tif(raster_f, segments, out_tif='segment.tif', ndval=-9999):
     with rio.open(raster_f) as src:
         meta = src.profile
         nodatavals = src.read_masks(1).astype('int16')
-    print(meta)
 
     # load numpy array if file is given
     if type(segments) == str:

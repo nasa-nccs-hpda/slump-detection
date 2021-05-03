@@ -83,8 +83,9 @@ SOLVER:
 # -------------------------------------------------------------------------
 PREDICTOR:
   PRED_WINDOW_SIZE: [3200, 3200]
-  PRED_FILENAMES:
-    - /gpfsm/ccds01/nobackup/temp/jacaraba/vhr-cloudmask/data/WV02_20160709_M1BS_10300100591D6600-toa_pansharpen.tif
+  PRED_FILENAMES: '/gpfsm/ccds01/nobackup/temp/jacaraba/slump-detection/data/WV02_*-toa_pansharpen.tif'
+  # PRED_FILENAMES: '/gpfsm/ccds01/nobackup/temp/jacaraba/slump-detection/data/WV02_20160709_M1BS_10300100591D6600-toa_pansharpen.tif'
+  #  - /gpfsm/ccds01/nobackup/temp/jacaraba/vhr-cloudmask/data/WV02_20160709_M1BS_10300100591D6600-toa_pansharpen.tif
 
 # -------------------------------------------------------------------------
 # MODEL
