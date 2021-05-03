@@ -4,7 +4,8 @@
 import warnings
 import xarray as xr
 from detectron2.config import get_cfg
-# from skimage import img_as_ubyte
+from skimage.util import img_as_ubyte
+from skimage import exposure
 from core.utils import arg_parser
 from core.utils import get_bands, gen_data_png, gen_coco_dataset
 
@@ -37,14 +38,7 @@ def run(cfg):
         print("Image after get_bands: ", image_data.shape, label_data.shape)
 
         # lower resolution here
-        from skimage.util import img_as_ubyte
-        image_data = img_as_ubyte(image_data)
-
-        # from skimage import exposure
-        # image_data = exposure.rescale_intensity(
-        #   image_data, out_range=(0, 2**31 - 1))
-        # print(image_data)
-        # image_data = img_as_ubyte(image_data)
+        image_data = exposure.rescale_intensity(img_as_ubyte(image_data))
 
         # transforming 1 to 255 for now to visualize locally
         label_data[label_data == 1] = 255

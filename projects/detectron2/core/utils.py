@@ -1,21 +1,23 @@
 # --------------------------------------------------------------------------
 # Utilities directory for slump detection models generation.
 # --------------------------------------------------------------------------
-import os                            # for os utilities
-import sys                           # for os utilities
-import math                          # for math operations
-from tqdm import tqdm                # for progress bar
-import torch                         # AI backend
-import argparse                      # for arguments parsing
-import datetime                      # for dates manipulation
-import glob                          # for local files manipulation
-import json                          # for json handling
-import random                        # for random integers
-import numpy as np                   # for arrays modifications
-import imageio                       # for managing images
-import rasterio as rio               # for geospational processing
-from core import pycococreatortools  # for coco utilities
-from PIL import Image                # for managing images
+import os                              # for os utilities
+import sys                             # for os utilities
+import math                            # for math operations
+from tqdm import tqdm                  # for progress bar
+import torch                           # AI backend
+import argparse                        # for arguments parsing
+import datetime                        # for dates manipulation
+import glob                            # for local files manipulation
+import json                            # for json handling
+import random                          # for random integers
+import numpy as np                     # for arrays modifications
+import imageio                         # for managing images
+import rasterio as rio                 # for geospational processing
+from core import pycococreatortools    # for coco utilities
+from PIL import Image                  # for managing images
+from skimage.util import img_as_ubyte  # for imagery modification
+from skimage import exposure           # for imagery modification
 
 __author__ = "Jordan A Caraballo-Vega, Science Data Processing Branch"
 __email__ = "jordan.a.caraballo-vega@nasa.gov"
@@ -385,8 +387,10 @@ def predict_batch(x_data, model, config):
             if y1 - y0 < config.INPUT.MAX_SIZE_TRAIN:  # y smaller than tsize
                 y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
-            from skimage.util import img_as_ubyte
-            window = img_as_ubyte(x_data[:, x0:x1, y0:y1].values)
+            window = exposure.rescale_intensity(
+                img_as_ubyte(x_data[:, x0:x1, y0:y1].values)
+            )
+            imageio.imsave(f'{sx}_{sy}.png', window)
             window = torch.from_numpy(window)  # window
             # window[window < 0] = 0  # remove lower bound values
             # window[window > 10000] = 10000  # remove higher bound values
