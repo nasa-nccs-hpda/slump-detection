@@ -385,12 +385,11 @@ def predict_batch(x_data, model, config):
             if y1 - y0 < config.INPUT.MAX_SIZE_TRAIN:  # y smaller than tsize
                 y0 = y1 - config.INPUT.MAX_SIZE_TRAIN  # boundary to -tsize
 
-            window = torch.from_numpy(x_data[:, x0:x1, y0:y1].values)  # window
-            window[window < 0] = 0  # remove lower bound values
-            window[window > 10000] = 10000  # remove higher bound values
-
             from skimage.util import img_as_ubyte
-            window = img_as_ubyte(window)
+            window = img_as_ubyte(x_data[:, x0:x1, y0:y1].values)
+            window = torch.from_numpy(window)  # window
+            #window[window < 0] = 0  # remove lower bound values
+            #window[window > 10000] = 10000  # remove higher bound values
 
             # perform sliding window prediction
             # prediction[x0:x1, y0:y1] = predict_sliding(window, model, config)
