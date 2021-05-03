@@ -113,7 +113,7 @@ if __name__ == "__main__":
     # ---------------------------------------------------------------------------
     # Set GPU devices
     # ---------------------------------------------------------------------------
-    print(cfg.SOLVER.CUDA_DEVICES, f'{cfg.SOLVER.CUDA_DEVICES}')
+    print(cfg.SOLVER.CUDA_DEVICES, f'{cfg.SOLVER.CUDA_DEVICES}', ','.join(cfg.SOLVER.CUDA_DEVICES))
     os.environ['CUDA_VISIBLE_DEVICES'] = "0,1,2,3"
 
     # ---------------------------------------------------------------------------
