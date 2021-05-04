@@ -32,8 +32,12 @@ def run(cfg):
         # drop bands we are not interested in given the ones we actually want
         image_data = get_bands(
             image_data, cfg.INPUT.INPUT_BANDS, cfg.INPUT.OUTPUT_BANDS
-        ).values
+        ).values.astype(np.int16)
         print("Image after get_bands: ", image_data.shape, label_data.shape)
+
+        # EVHR outputs values outside of allowed range [0,10000]
+        image_data[image_data < 0] = 0
+        image_data[image_data > 10000] = 10000
 
         # lower resolution here
         image_data = exposure.rescale_intensity(img_as_ubyte(image_data))
