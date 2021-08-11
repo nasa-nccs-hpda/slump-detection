@@ -1,0 +1,101 @@
+# -------------------------------------------------------------------------
+# Version Control Configuration File for Slump Detection Architecture.
+# This file is divided into sections that feed the scripts for the
+# detectron2 project. Information for each field is listed below.
+# Several versions of this file can be generated to document several tests.
+# -------------------------------------------------------------------------
+_BASE_: "Base-RCNN-FPN.yaml"
+
+# -------------------------------------------------------------------------
+# INPUT
+# -------------------------------------------------------------------------
+INPUT:
+  INPUT_BANDS:
+    - 'CoastalBlue'
+    - 'Blue'
+    - 'Green'
+    - 'Yellow'
+    - 'Red'
+    - 'RedEdge'
+    - 'NIR1'
+    - 'NIR2'
+  OUTPUT_BANDS:
+    - 'Red'
+    - 'Green'
+    - 'Blue'
+  MIN_SIZE_TRAIN: 256
+  MAX_SIZE_TRAIN: 256
+  MIN_SIZE_TEST: 256
+  MAX_SIZE_TEST: 256
+  RANDOM_FLIP: "vertical"
+
+# -------------------------------------------------------------------------
+# DATASETS
+# -------------------------------------------------------------------------
+DATASETS:
+  IMAGES:
+    - '../../data/trialrun_data.tif'
+  LABELS:
+    - '../../data/trialrun_label.tif'
+  NUM_TRAIN_TILES: 75
+  NUM_TEST_TILES: 25
+  NUM_VAL_TILES: 25
+  NUM_TRUE_PIXELS: 0
+  OUTPUT_DIRECTORY: '../../data'
+  TRAIN: ('slump-detection_trialrun_TRAIN',)
+  VAL: ('slump-detection_trialrun_VAL',)
+  COCO_METADATA:
+    DESCRIPTION: slump-detection_trialrun
+    INFO:
+      description: "Slump Detection in World View VHR Imagery"
+      url: "https://www.nccs.nasa.gov"
+      version: "0.1.0"
+      year: "2021"
+      contributor: "Jordan A. Caraballo-Vega"
+    LICENSES:
+      id: 1
+      name: "World View Maxar Agreement"
+      url: "https://www.nccs.nasa.gov"
+    CATEGORIES:
+      id: 1
+      name: "Slump"
+      supercategory: "slump"
+    CATEGORY_INFO:
+      id: 1
+      is_crowd: False
+
+# -------------------------------------------------------------------------
+# DATALOADER
+# -------------------------------------------------------------------------
+DATALOADER:
+  FILTER_EMPTY_ANNOTATIONS: False
+
+# -------------------------------------------------------------------------
+# SOLVER
+# -------------------------------------------------------------------------
+SOLVER:
+  IMS_PER_BATCH: 16
+  BASE_LR: 0.0025
+  MAX_ITER: 350
+
+# -------------------------------------------------------------------------
+# PREDICTOR
+# -------------------------------------------------------------------------
+PREDICTOR:
+  PRED_WINDOW_SIZE: [3200, 3200]
+  PRED_FILENAMES: '/gpfsm/ccds01/nobackup/temp/jacaraba/slump-detection/data/WV02_*-toa_pansharpen.tif'
+  # PRED_FILENAMES:
+  #  - /gpfsm/ccds01/nobackup/temp/jacaraba/vhr-cloudmask/data/WV02_20160709_M1BS_10300100591D6600-toa_pansharpen.tif
+
+# -------------------------------------------------------------------------
+# MODEL
+# -------------------------------------------------------------------------
+MODEL:
+  ROI_HEADS:
+    NAME: "StandardROIHeads"
+    BATCH_SIZE_PER_IMAGE: 128
+    NUM_CLASSES: 1
+    SCORE_THRESH_TEST: 0.95
+  OUTPUT_DIRECTORY: '../../data/model'
+  MODEL_NAME: 'model_final.pth'
+  DELETE_MODEL: True

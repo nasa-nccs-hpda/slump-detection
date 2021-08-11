@@ -1,6 +1,12 @@
 FROM nvidia/cuda:11.1.1-devel-ubuntu20.04
 #FROM nvidia/cuda:11.2.2-devel-ubuntu20.04
 
+LABEL maintainer="jordan.a.caraballo-vega@nasa.gov"
+
+LABEL NASA NCCS DETECTRON2
+LABEL OS Ubuntu
+LABEL OS_MAJOR_VERS 20
+
 # Ubuntu needs noninteractive to be forced
 ENV DEBIAN_FRONTEND noninteractive
 
