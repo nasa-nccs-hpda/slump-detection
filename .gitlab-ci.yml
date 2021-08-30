@@ -15,7 +15,9 @@
 
 variables:
     CONTAINER_NAME: "mineonly"
+
 include:
-    - template: "NCCSContainers/Docker-Build.gitlab-ci.yml"
+    - template: "Docker-Build.gitlab-ci.yml"
+
 stages:          # List of stages for jobs, and their order of execution
   - build
