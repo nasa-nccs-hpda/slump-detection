@@ -4,7 +4,7 @@
 import os                              # for os utilities
 import sys                             # for os utilities
 import math                            # for math operations
-from tqdm import tqdm                  # for progress bar
+from tqdm.autonotebook import tqdm     # for loop progress
 import torch                           # AI backend
 import argparse                        # for arguments parsing
 import datetime                        # for dates manipulation
@@ -64,7 +64,8 @@ def gen_data_png(fimg, img, label, cfg, set='train'):
 
     n_true_pixels = cfg.DATASETS.NUM_TRUE_PIXELS  # num of true pixels per tile
     fimg = fimg.split('/')[-1][:-4]  # image filename for output
-    save_dir = cfg.DATASETS.OUTPUT_DIRECTORY + f'/{set}'  # output directory
+    save_dir = os.path.join(cfg.DATASETS.OUTPUT_DIRECTORY, set)
+    print(f'Saving file under: {save_dir}')
 
     n_tiles = cfg.DATASETS[f'NUM_{set}_TILES']  # number of tiles to extract
     os.system(f'mkdir -p {save_dir}')  # create saving directory
@@ -89,8 +90,14 @@ def gen_data_png(fimg, img, label, cfg, set='train'):
         tile_lab = label[yc:(yc + tsz), xc:(xc + tsz)]
 
         # save png images
-        imageio.imwrite(f'{save_dir}/{fimg}_img_{i+1}.png', tile_img)
-        imageio.imwrite(f'{save_dir}/{fimg}_lbl_{i+1}.png', tile_lab)
+        imageio.imwrite(
+            os.path.join(save_dir, f'{fimg}_img_{i+1}.png'),
+             tile_img
+        )
+        imageio.imwrite(
+            os.path.join(save_dir, f'{fimg}_lbl_{i+1}.png'), 
+            tile_lab
+        )
 
 
 def gen_coco_dataset(
@@ -107,75 +114,80 @@ def gen_coco_dataset(
     data_dir = cfg.DATASETS.OUTPUT_DIRECTORY  # root directory
     input_dir = os.path.join(data_dir, set)  # directory where images reside
     dataset_name = cfg.DATASETS.COCO_METADATA.DESCRIPTION
-    json_out = f'{data_dir}/{dataset_name}_{set}.json'  # output
+    json_out = os.path.join(data_dir, f'{dataset_name}_{set}.json')
 
-    if not os.path.isfile(json_out):
+    # src: https://patrickwasp.com/create-your-own-coco-style-dataset/
+    # Define several sections of the COCO Dataset Format
 
-        # src: https://patrickwasp.com/create-your-own-coco-style-dataset/
-        # Define several sections of the COCO Dataset Format
+    # General Information
+    INFO = dict(cfg.DATASETS.COCO_METADATA.INFO)
+    INFO["date_created"] = datetime.datetime.utcnow().isoformat(' ')
 
-        # General Information
-        INFO = dict(cfg.DATASETS.COCO_METADATA.INFO)
-        INFO["date_created"] = datetime.datetime.utcnow().isoformat(' ')
+    # Licenses and categories
+    LICENSES = [dict(cfg.DATASETS.COCO_METADATA.LICENSES)]
+    CATEGORIES = [dict(cfg.DATASETS.COCO_METADATA.CATEGORIES)]
+    CATEGORY_INFO = dict(cfg.DATASETS.COCO_METADATA.CATEGORY_INFO)
 
-        # Licenses and categories
-        LICENSES = [dict(cfg.DATASETS.COCO_METADATA.LICENSES)]
-        CATEGORIES = [dict(cfg.DATASETS.COCO_METADATA.CATEGORIES)]
-        CATEGORY_INFO = dict(cfg.DATASETS.COCO_METADATA.CATEGORY_INFO)
+    # Retrieve filenames from local storage
+    train_names = sorted(
+        glob.glob(os.path.join(input_dir, img_reg))
+    )
+    mask_names = sorted(
+        glob.glob(os.path.join(input_dir, label_reg))
+    )
 
-        # Retrieve filenames from local storage
-        train_names = sorted(glob.glob(f'{input_dir}/{img_reg}'))
-        mask_names = sorted(glob.glob(f'{input_dir}/{label_reg}'))
-        print(f"Number of train and mask images: {len(train_names)}")
+    # place holders to store dataset metadata
+    images = list()
+    annotations = list()
+    pastId = 0
 
-        # place holders to store dataset metadata
-        images = list()
-        annotations = list()
-        pastId = 0
+    # go through each image
+    annot_counter = 0
+    for curImgName, curMaskName in zip(train_names, mask_names):
 
-        # go through each image
-        for curImgName, curMaskName in zip(train_names, mask_names):
+        curImgFile = curImgName
+        curMaskFile = curMaskName
 
-            curImgFile = curImgName
-            curMaskFile = curMaskName
+        # taking care of the images
+        curImg = Image.open(curImgFile)
+        curImgId = pastId + 1  # make sure it's properly unique
+        pastId = curImgId
+        curImgInfo = pycococreatortools.create_image_info(
+            curImgId, os.path.basename(curImgFile), curImg.size
+        )
+        images.append(curImgInfo)
 
-            # taking care of the images
-            curImg = Image.open(curImgFile)
-            curImgId = pastId + 1  # make sure it's properly unique
-            pastId = curImgId
-            curImgInfo = pycococreatortools.create_image_info(
-                curImgId, os.path.basename(curImgFile), curImg.size
-            )
-            images.append(curImgInfo)
+        # taking care of the annotations
+        curAnnotationId = str(curImgId)
+        binaryMask = np.asarray(
+            Image.open(curMaskFile).convert('1')
+        ).astype(np.uint8)
 
-            # taking care of the annotations
-            curAnnotationId = str(curImgId)
-            binaryMask = np.asarray(
-                Image.open(curMaskFile).convert('1')
-            ).astype(np.uint8)
+        annotationInfo = pycococreatortools.create_annotation_info(
+            curAnnotationId, curImgId, CATEGORY_INFO, binaryMask,
+            curImg.size, tolerance=2
+        )
 
-            annotationInfo = pycococreatortools.create_annotation_info(
-                curAnnotationId, curImgId, CATEGORY_INFO, binaryMask,
-                curImg.size, tolerance=2
-            )
+        if annotationInfo is not None:
+            annotations.append(annotationInfo)
+        else:
+            annot_counter += 1
 
-            if annotationInfo is not None:
-                annotations.append(annotationInfo)
-            else:
-                print('\tNo annotationInfo found for: ' + curMaskName)
+    print(
+        f'Number of train and mask images: {len(train_names)}', 
+        f'{annot_counter} without annotations.'
+    )
 
-        coco_info = {
-            "info": INFO,
-            "licenses": LICENSES,
-            "categories": CATEGORIES,
-            "images": images,
-            "annotations": annotations,
-        }
+    coco_info = {
+        "info": INFO,
+        "licenses": LICENSES,
+        "categories": CATEGORIES,
+        "images": images,
+        "annotations": annotations,
+    }
 
-        with open(json_out, 'w') as f:
-            f.write(json.dumps(coco_info))
-    else:
-        sys.exit(f'{json_out} already exists. Please remove it and re-run.')
+    with open(json_out, 'w') as f:
+        f.write(json.dumps(coco_info))
 
 
 def predict_windowing(x, model, config):

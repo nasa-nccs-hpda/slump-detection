@@ -27,21 +27,22 @@ INPUT:
   MAX_SIZE_TRAIN: 256
   MIN_SIZE_TEST: 256
   MAX_SIZE_TEST: 256
-  RANDOM_FLIP: "vertical"
+  RANDOM_FLIP: "horizontal"
+#    - "horizontal"
 
 # -------------------------------------------------------------------------
 # DATASETS
 # -------------------------------------------------------------------------
 DATASETS:
   IMAGES:
-    - '../../data/trialrun_data.tif'
+    - '/att/gpfsfs/briskfs01/ppl/jacaraba/slump-detection-data/data/trialrun_data.tif'
   LABELS:
-    - '../../data/trialrun_label.tif'
-  NUM_TRAIN_TILES: 75
+    - '/att/gpfsfs/briskfs01/ppl/jacaraba/slump-detection-data/data/trialrun_label.tif'
+  NUM_TRAIN_TILES: 300
   NUM_TEST_TILES: 25
   NUM_VAL_TILES: 25
   NUM_TRUE_PIXELS: 0
-  OUTPUT_DIRECTORY: '../../data'
+  OUTPUT_DIRECTORY: '/att/gpfsfs/briskfs01/ppl/jacaraba/slump-detection-data'
   TRAIN: ('slump-detection_trialrun_TRAIN',)
   VAL: ('slump-detection_trialrun_VAL',)
   COCO_METADATA:
@@ -76,7 +77,8 @@ DATALOADER:
 SOLVER:
   IMS_PER_BATCH: 16
   BASE_LR: 0.0025
-  MAX_ITER: 350
+  MAX_ITER: 300
+  STEPS: (210000, 250000)
 
 # -------------------------------------------------------------------------
 # PREDICTOR
@@ -96,6 +98,6 @@ MODEL:
     BATCH_SIZE_PER_IMAGE: 128
     NUM_CLASSES: 1
     SCORE_THRESH_TEST: 0.95
-  OUTPUT_DIRECTORY: '../../data/model'
+  OUTPUT_DIRECTORY: '/att/gpfsfs/briskfs01/ppl/jacaraba/slump-detection-data'
   MODEL_NAME: 'model_final.pth'
   DELETE_MODEL: True
