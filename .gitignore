@@ -7,3 +7,4 @@ __pycache__
 model/
 output/
 slurm*
+.ipynb_checkpoints/
