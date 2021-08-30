@@ -14,6 +14,14 @@ A system with NVIDIA GPUs is required to run the scripts located in this reposit
 - projects/detectron2: utilizes the detectron2 framework for the task of instance segmentation
 leveraging MaskRCNN and Fast RCNN. The backend engine is PyTorch.
 
+## Summarized Steps
+
+```bash
+ssh adaptlogin.nccs.nasa.gov
+ssh gpulogin1
+cd $NOBACKUP/slump-detection/projects/detectron2
+```
+
 ## Table of Contents
 
 1. [Logging-In](#Logging_In)
@@ -65,7 +73,9 @@ file with a .sif extension. Depending on the file system, this step can take sev
 
 ```bash
 cd $NOBACKUP
-singularity pull docker://docker.io/nasanccs/slump-detectron2:11.1
+module load singularity
+singularity pull docker://docker.io/nasanccs/slump-detectron2:latest
+singularity build --sandbox slump-detectron2_latest slump-detectron2_latest.sif
 ```
 
 ## Working Inside a Container <a name="Working_Inside_Container"></a>
@@ -132,6 +142,78 @@ cd $NOBACKUP/slump-detection/projects/detectron2
 sbatch predict_detectron2.sh
 ```
 
+## Project Specific Information
+
+Data resides under:
+
+``` bash
+/att/nobackup/mwooten3/EVHR_requests/_deliver/EWebbRequest
+```
+
+```bash
+[1:27 PM] Caraballo-Vega, Jordan Alexis (GSFC-5870)
+ssh adaptlogin
+
+[1:27 PM] Caraballo-Vega, Jordan Alexis (GSFC-5870)
+ssh gpulogin1
+
+[1:28 PM] Caraballo-Vega, Jordan Alexis (GSFC-5870)
+module load anaconda
+
+[1:28 PM] Caraballo-Vega, Jordan Alexis (GSFC-5870)
+conda create --name slump-detection-11.1 --clone /att/nobackup/jacaraba/.conda/envs/slump-detection-11.1
+
+
+conda create --name slump-detection-11.1 --clone /att/nobackup/jacaraba/.conda/envs/slump-detection-11.1
+```
+
+## Anaconda environment
+
+```bash
+module load anaconda
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+conda create -y -n slump-detection rioxarray cupy cudatoolkit=11.2 dask-cuda cudnn cutensor nccl ipykernel ipywidgets matplotlib geopandas iteration_utilities
+```
+
+Install pip dependencies
+
+```bash
+conda activate slump-detection
+pip install -r requirements.txt
+pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+pip install 'git+https://github.com/facebookresearch/fvcore'
+pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
+git clone https://github.com/facebookresearch/detectron2 detectron2_repo && pip install -e detectron2_repo
+```
+I think that we need to add nvcc
+
+
+conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
+conda create -n rapids-21.06 -c rapidsai -c nvidia -c conda-forge     rapids-blazing=21.06 python=3.7 cudatoolkit=11.2 nvcc_linux-64 nccl ipykernel ipywidgets matplotlib geopandas iteration_utilities
+
+
+conda create -n rapids-21.06 -c rapidsai -c nvidia -c conda-forge -c pytorch rapids-blazing=21.06 python=3.7 cudatoolkit=11.1 ipykernel ipywidgets matplotlib geopandas pytorch torchvision torchaudio cudatoolkit=11.1 
+
+## =======================
+
+Trying this one
+
+```bash
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+conda create -y -n slump-detection-11.1 rioxarray cupy cudatoolkit=11.1 dask-cuda cudnn cutensor nccl ipykernel ipywidgets matplotlib geopandas iteration_utilities gcc_linux-64
+```
+
+```bash
+pip install cython
+pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
+pip install 'git+https://github.com/facebookresearch/fvcore'
+pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
+pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu111/torch1.9/index.html
+pip install opencv-python scikit-image
+```
+
 ## Authors
 
 - Jordan Alexis Caraballo-Vega, <jordan.a.caraballo-vega@nasa.gov>
@@ -143,3 +225,4 @@ sbatch predict_detectron2.sh
 [2] Paszke, Adam; Gross, Sam; Chintala, Soumith; Chanan, Gregory; et all, PyTorch, (2016), GitHub repository, https://github.com/pytorch/pytorch. Accessed 13 February 2020.
 
 [3] Google Brain Team; et all, TensorFlow, (2015), GitHub repository, https://github.com/tensorflow/tensorflow. Accessed 13 February 2020.
+

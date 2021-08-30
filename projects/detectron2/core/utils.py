@@ -126,7 +126,7 @@ def gen_coco_dataset(
         # Retrieve filenames from local storage
         train_names = sorted(glob.glob(f'{input_dir}/{img_reg}'))
         mask_names = sorted(glob.glob(f'{input_dir}/{label_reg}'))
-        print(f"Number of train and mask images: {len(train_names)}")
+        print(f"Number of images and masks: {len(train_names)}")
 
         # place holders to store dataset metadata
         images = list()

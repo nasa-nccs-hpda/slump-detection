@@ -26,7 +26,7 @@ def run(cfg):
 
         # read input data
         image_data = xr.open_rasterio(image).transpose("y", "x", "band")
-        label_data = xr.open_rasterio(label).squeeze().values
+        label_data = xr.open_rasterio(label).squeeze().values.astype(np.uint8)
         print("Image and label shapes: ", image_data.shape, label_data.shape)
 
         # drop bands we are not interested in given the ones we actually want
@@ -36,8 +36,7 @@ def run(cfg):
         print("Image after get_bands: ", image_data.shape, label_data.shape)
 
         # EVHR outputs values outside of allowed range [0,10000]
-        image_data[image_data < 0] = 0
-        image_data[image_data > 10000] = 10000
+        image_data = np.clip(image_data, 0, 10000)
 
         # lower resolution here
         image_data = exposure.rescale_intensity(img_as_ubyte(image_data))

@@ -5,10 +5,8 @@ seaborn
 scipy
 Pillow
 imagecodecs
-rasterio
 dask-image
 imageio
-xarray
 numpy
 pandas
 tensorboard
