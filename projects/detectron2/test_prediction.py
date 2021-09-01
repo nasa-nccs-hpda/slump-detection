@@ -52,7 +52,7 @@ model.load_state_dict(model_dict['model'])  # load metadata
 # model = nn.DataParallel(model)
 model.train(False)  # we are predicting, weights are already updated
 
-cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7   # set a custom testing threshold
 predictor = DefaultPredictor(cfg)
 
@@ -62,6 +62,18 @@ from detectron2.data.datasets import register_coco_instances
 from detectron2.utils.visualizer import ColorMode
 
 dataset_name = cfg.DATASETS.COCO_METADATA.DESCRIPTION
+input_dir = cfg.DATASETS.OUTPUT_DIRECTORY
+
+# Registor COCO datasets for train, val, and test
+for curType in ['TRAIN', 'VAL', 'TEST']:
+    curJson = os.path.join(
+        input_dir, dataset_name + '_' + curType + '.json'
+    )
+    curDir = os.path.join(input_dir, curType)
+    register_coco_instances(
+        f'{dataset_name}_{curType}', {}, curJson, curDir
+    )
+
 metadata = MetadataCatalog.get(dataset_name + '_TEST')
 dataset_dicts = DatasetCatalog.get(dataset_name + '_TEST')
 
