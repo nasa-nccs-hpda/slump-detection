@@ -56,10 +56,34 @@ cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to t
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7   # set a custom testing threshold
 predictor = DefaultPredictor(cfg)
 
+from detectron2.utils.visualizer import Visualizer
+from detectron2.data import MetadataCatalog, DatasetCatalog
+from detectron2.data.datasets import register_coco_instances
 from detectron2.utils.visualizer import ColorMode
 
+dataset_name = cfg.DATASETS.COCO_METADATA.DESCRIPTION
+metadata = MetadataCatalog.get(dataset_name + '_TEST')
+dataset_dicts = DatasetCatalog.get(dataset_name + '_TEST')
+
 for d in random.sample(data_files, 3):
-    print(d)
+    im = cv2.imread(d)
+    outputs = predictor(im)
+
+    v = Visualizer(
+            im[:, :, ::-1],
+            metadata=metadata,
+            scale=1,
+    )
+    # print(metadata)
+    # out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    # out = v.draw_binary_mask(outputs["instances"].to("cpu"))
+    # out = v.draw_sem_seg(outputs["instances"].to("cpu"))
+    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    filename = d.split('/')[-1]
+    predictFileName = os.path.basename(filename)
+    file_out = os.path.join(cfg.OUTPUT_DIR, predictFileName)
+    cv2.imwrite(file_out, out.get_image()[:, :, ::-1])
+
 
 #    im = cv2.imread(d["file_name"])
 #    outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
