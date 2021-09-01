@@ -94,6 +94,7 @@ for d in random.sample(data_files, 3):
     filename = d.split('/')[-1]
     predictFileName = os.path.basename(filename)
     file_out = os.path.join(cfg.OUTPUT_DIR, predictFileName)
+    print(file_out)
     cv2.imwrite(file_out, out.get_image()[:, :, ::-1])
 
 
