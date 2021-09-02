@@ -9,3 +9,4 @@ output/
 slurm*
 .ipynb_checkpoints/
 data/
+models/
