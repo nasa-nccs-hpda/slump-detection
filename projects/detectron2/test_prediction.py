@@ -93,7 +93,10 @@ for d in random.sample(data_files, 3):
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
     filename = d.split('/')[-1]
     predictFileName = os.path.basename(filename)
-    file_out = os.path.join(cfg.OUTPUT_DIR, predictFileName)
+    output_directory = os.path.join(cfg.OUTPUT_DIR, 'prediction')
+
+    os.makedirs(output_directory, exist_ok=True)
+    file_out = os.path.join(output_directory, predictFileName)
     print(file_out)
     cv2.imwrite(file_out, out.get_image()[:, :, ::-1])
 
