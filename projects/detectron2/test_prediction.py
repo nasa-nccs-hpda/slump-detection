@@ -77,7 +77,7 @@ for curType in ['TRAIN', 'VAL', 'TEST']:
 metadata = MetadataCatalog.get(dataset_name + '_TEST')
 dataset_dicts = DatasetCatalog.get(dataset_name + '_TEST')
 
-for d in random.sample(data_files, 3):
+for d in data_files: #random.sample(data_files, 3):
     im = cv2.imread(d)
     outputs = predictor(im)
 
