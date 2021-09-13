@@ -23,26 +23,46 @@
 # Configure container building with CI/CD variables (https://docs.gitlab.com/ee/ci/variables/index.html).
 # List of available variables: above in the project.
 
-variables:
-  CONTAINER_NAME: "$CI_PROJECT_NAME-container" # container name, e.g. mycontainer
-  CONFIGURATION_LOCATION: "$CI_PROJECT_DIR/Singularity.def" # container configuration, e.g. packages/Singularity.def
-  CONTAINER_VERSION: "latest" # container version, e.g. 1.0.0
+# variables:
+#  CONTAINER_NAME: "$CI_PROJECT_NAME-container" # container name, e.g. mycontainer
+#  CONFIGURATION_LOCATION: "$CI_PROJECT_DIR/Singularity.def" # container configuration, e.g. packages/Singularity.def
+#  CONTAINER_VERSION: "latest" # container version, e.g. 1.0.0
 
 # Build ILAB Datascience Container
-build_singularity_container:
+# build_singularity_container:
+#  stage: build
+#  tags:
+#    - build
+#    - push
+#    - singularity
+#  image: 
+#    name: gitlab.nccs.nasa.gov:5050/nccs-ci/nccs-containers/singularity/nccs-centos7-singularity37:latest
+#    entrypoint: [""]
+#  allow_failure: false
+#  dependencies: []
+#  script: 
+#    - singularity build ${CONTAINER_NAME}.sif $CONFIGURATION_LOCATION
+#    - >
+#       singularity push --docker-username "${CI_REGISTRY_USER}" --docker-password "${CI_REGISTRY_PASSWORD}" 
+#       ${CONTAINER_NAME}.sif oras://$CI_REGISTRY/$CI_PROJECT_PATH/$CONTAINER_NAME:$CONTAINER_VERSION
+
+stages:
+  - build
+
+build_slump-detection:
   stage: build
   tags:
     - build
     - push
-    - singularity
-  image: 
-    name: gitlab.nccs.nasa.gov:5050/nccs-ci/nccs-containers/singularity/nccs-centos7-singularity37:latest
+  image:
+    name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
-  allow_failure: false
-  dependencies: []
-  script: 
-    - singularity build ${CONTAINER_NAME}.sif $CONFIGURATION_LOCATION
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - >
-       singularity push --docker-username "${CI_REGISTRY_USER}" --docker-password "${CI_REGISTRY_PASSWORD}" 
-       ${CONTAINER_NAME}.sif oras://$CI_REGISTRY/$CI_PROJECT_PATH/$CONTAINER_NAME:$CONTAINER_VERSION
-
+      /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/requirements/Dockerfile 
+      --destination $CI_REGISTRY/jacaraba/slump-detection/slump-detection-cuda11.1:latest
+  only:
+    changes:
+    - base/centos/centos7/*
