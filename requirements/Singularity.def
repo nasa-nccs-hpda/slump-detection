@@ -13,6 +13,15 @@ FROM: nvidia/cuda:11.1.1-devel-ubuntu20.04
     OS_MAJOR_VERS 20
 
 %environment
+    export DEBIAN_FRONTEND="noninteractive"
+    export FORCE_CUDA="1"
+    export TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
+    export FVCORE_CACHE="/tmp"
+
+%files
+    requirements.txt /opt/requirements.txt
+
+%post
     # Ubuntu needs noninteractive to be forced
     # set FORCE_CUDA because during `docker build` cuda is not accessible
     export DEBIAN_FRONTEND="noninteractive"
@@ -24,10 +33,6 @@ FROM: nvidia/cuda:11.1.1-devel-ubuntu20.04
     export TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
     export FVCORE_CACHE="/tmp"
 
-%files
-    requirements.txt /opt/requirements.txt
-
-%post
     # Install OS and Python core dependencies
     # Install dependencies: https://pytorch.org/ for other options if you use a different version of CUDA
     apt-get update && apt-get -y dist-upgrade && \
