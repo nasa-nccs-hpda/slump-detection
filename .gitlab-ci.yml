@@ -22,9 +22,9 @@ build_slump-detection:
     - >
       /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/requirements/Dockerfile 
       --destination $CI_REGISTRY/$CI_PROJECT_PATH/$CONTAINER_NAME:$CONTAINER_VERSION
-    only:
-      changes:
-        - requirements/Dockerfile
+  only:
+    changes:
+      - requirements/Dockerfile
 
 build_slump-detection-singularity:
   stage: build
