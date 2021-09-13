@@ -36,7 +36,8 @@ RUN apt-get update && apt-get -y dist-upgrade && \
     pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 \
     -f https://download.pytorch.org/whl/torch_stable.html && \
     pip install 'git+https://github.com/facebookresearch/fvcore' && \
-    pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI" && \
+    # pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI" && \
+    pip install git+git://github.com/waspinator/coco.git@2.1.0 && \
     pip cache purge && \
     rm -rf /opt/requirements.txt && \
     rm -rf /var/cache/apt
@@ -45,4 +46,3 @@ RUN apt-get update && apt-get -y dist-upgrade && \
 RUN git clone https://github.com/facebookresearch/detectron2 detectron2_repo && \
     pip install -e detectron2_repo && \
     pip cache purge
-    #rm -rf detectron2_repo

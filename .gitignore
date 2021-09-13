@@ -10,3 +10,4 @@ slurm*
 .ipynb_checkpoints/
 data/
 models/
+coco*
