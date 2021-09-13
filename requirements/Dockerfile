@@ -37,7 +37,7 @@ RUN apt-get update && apt-get -y dist-upgrade && \
     -f https://download.pytorch.org/whl/torch_stable.html && \
     pip install 'git+https://github.com/facebookresearch/fvcore' && \
     # pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI" && \
-    pip install git+git://github.com/waspinator/coco.git@2.1.0 && \
+    pip install --upgrade git+git://github.com/waspinator/coco.git@2.1.0 numpy cython && \
     pip cache purge && \
     rm -rf /opt/requirements.txt && \
     rm -rf /var/cache/apt
