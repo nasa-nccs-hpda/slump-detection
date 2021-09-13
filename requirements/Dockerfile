@@ -37,20 +37,12 @@ RUN apt-get update && apt-get -y dist-upgrade && \
     -f https://download.pytorch.org/whl/torch_stable.html && \
     pip install 'git+https://github.com/facebookresearch/fvcore' && \
     pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI" && \
-    git clone https://github.com/facebookresearch/detectron2 detectron2_repo && \
-    pip install -e detectron2_repo && \
     pip cache purge && \
-    rm -rf detectron2_repo /opt/requirements.txt && \
+    rm -rf /opt/requirements.txt && \
     rm -rf /var/cache/apt
 
-# install dependencies
-# See https://pytorch.org/ for other options if you use a different version of CUDA
-#RUN pip install -r requirements.txt && \
-#    pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 \
-#    -f https://download.pytorch.org/whl/torch_stable.html && \
-#    pip install 'git+https://github.com/facebookresearch/fvcore' && \
-#    pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
-
 # install detectron2
-#RUN git clone https://github.com/facebookresearch/detectron2 detectron2_repo && \
-#    pip install -e detectron2_repo
+RUN git clone https://github.com/facebookresearch/detectron2 detectron2_repo && \
+    pip install -e detectron2_repo && \
+    pip cache purge && \
+    rm -rf detectron2_repo

@@ -2,7 +2,6 @@
 # Utilities directory for slump detection models generation.
 # --------------------------------------------------------------------------
 import os                              # for os utilities
-import sys                             # for os utilities
 import math                            # for math operations
 from tqdm.autonotebook import tqdm     # for loop progress
 import torch                           # AI backend

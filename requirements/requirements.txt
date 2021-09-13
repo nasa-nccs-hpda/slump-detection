@@ -12,3 +12,6 @@ pandas
 tensorboard
 cmake
 cython
+rasterio
+xarray
+tqdm
