@@ -27,6 +27,9 @@ build_slump-detection:
       - requirements/Dockerfile
 
 build_slump-detection-singularity:
+  image: 
+    name: gitlab.nccs.nasa.gov:5050/nccs-ci/nccs-containers/singularity/nccs-centos7-singularity37:latest
+    entrypoint: [""]
   stage: build
   tags:
     - singularity
