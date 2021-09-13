@@ -63,6 +63,3 @@ build_slump-detection:
     - >
       /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/requirements/Dockerfile 
       --destination $CI_REGISTRY/jacaraba/slump-detection/slump-detection-cuda11.1:latest
-  only:
-    changes:
-    - base/centos/centos7/*
