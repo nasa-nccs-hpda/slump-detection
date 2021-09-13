@@ -39,3 +39,6 @@ build_slump-detection-singularity:
        singularity push --docker-username "${CI_REGISTRY_USER}" --docker-password "${CI_REGISTRY_PASSWORD}" 
        ${CONTAINER_NAME}.sif oras://$CI_REGISTRY/$CI_PROJECT_PATH/${CONTAINER_NAME}-singularity:${CONTAINER_VERSION}
     - ls -lth ${CONTAINER_NAME}.sif
+  only:
+    changes:
+      - requirements/Singularity.def
