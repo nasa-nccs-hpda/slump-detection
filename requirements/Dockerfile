@@ -24,7 +24,7 @@ ENV FVCORE_CACHE="/tmp"
 
 # Install OS and Python core dependencies
 # Install dependencies: https://pytorch.org/ for other options if you use a different version of CUDA
-COPY requirements.txt /opt
+COPY requirements/requirements.txt /opt
 RUN apt-get update && apt-get -y dist-upgrade && \
     apt-get install -y python3-opencv ca-certificates python3-dev \
         git wget sudo ninja-build vim && \
