@@ -44,5 +44,5 @@ RUN apt-get update && apt-get -y dist-upgrade && \
 # install detectron2
 RUN git clone https://github.com/facebookresearch/detectron2 detectron2_repo && \
     pip install -e detectron2_repo && \
-    pip cache purge && \
-    rm -rf detectron2_repo
+    pip cache purge
+    #rm -rf detectron2_repo
