@@ -90,12 +90,10 @@ def gen_data_png(fimg, img, label, cfg, set='train'):
 
         # save png images
         imageio.imwrite(
-            os.path.join(save_dir, f'{fimg}_img_{i+1}.png'),
-             tile_img
+            os.path.join(save_dir, f'{fimg}_img_{i+1}.png'), tile_img
         )
         imageio.imwrite(
-            os.path.join(save_dir, f'{fimg}_lbl_{i+1}.png'), 
-            tile_lab
+            os.path.join(save_dir, f'{fimg}_lbl_{i+1}.png'), tile_lab
         )
 
 
@@ -173,7 +171,7 @@ def gen_coco_dataset(
             annot_counter += 1
 
     print(
-        f'Number of train and mask images: {len(train_names)}', 
+        f'Number of train and mask images: {len(train_names)}',
         f'{annot_counter} without annotations.'
     )
 
