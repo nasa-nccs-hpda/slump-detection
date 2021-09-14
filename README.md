@@ -147,24 +147,14 @@ sbatch predict_detectron2.sh
 Data resides under:
 
 ``` bash
-/att/nobackup/mwooten3/EVHR_requests/_deliver/EWebbRequest
+/att/nobackup/username/EVHR_requests/_deliver/EWebbRequest
 ```
 
 ```bash
-[1:27 PM] Caraballo-Vega, Jordan Alexis (GSFC-5870)
 ssh adaptlogin
-
-[1:27 PM] Caraballo-Vega, Jordan Alexis (GSFC-5870)
 ssh gpulogin1
-
-[1:28 PM] Caraballo-Vega, Jordan Alexis (GSFC-5870)
 module load anaconda
-
-[1:28 PM] Caraballo-Vega, Jordan Alexis (GSFC-5870)
-conda create --name slump-detection-11.1 --clone /att/nobackup/jacaraba/.conda/envs/slump-detection-11.1
-
-
-conda create --name slump-detection-11.1 --clone /att/nobackup/jacaraba/.conda/envs/slump-detection-11.1
+conda create --name slump-detection-11.1 --clone /att/nobackup/username/.conda/envs/slump-detection-11.1
 ```
 
 ## Anaconda environment
@@ -186,18 +176,21 @@ pip install 'git+https://github.com/facebookresearch/fvcore'
 pip install "git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
 git clone https://github.com/facebookresearch/detectron2 detectron2_repo && pip install -e detectron2_repo
 ```
-I think that we need to add nvcc
 
+Adding NCCL
 
+```bash
 conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
 conda create -n rapids-21.06 -c rapidsai -c nvidia -c conda-forge     rapids-blazing=21.06 python=3.7 cudatoolkit=11.2 nvcc_linux-64 nccl ipykernel ipywidgets matplotlib geopandas iteration_utilities
+```
 
+or
 
+```bash
 conda create -n rapids-21.06 -c rapidsai -c nvidia -c conda-forge -c pytorch rapids-blazing=21.06 python=3.7 cudatoolkit=11.1 ipykernel ipywidgets matplotlib geopandas pytorch torchvision torchaudio cudatoolkit=11.1 
+```
 
-## =======================
-
-Trying this one
+You could also enhance your kernel with:
 
 ```bash
 conda config --add channels conda-forge
@@ -225,4 +218,3 @@ pip install opencv-python scikit-image
 [2] Paszke, Adam; Gross, Sam; Chintala, Soumith; Chanan, Gregory; et all, PyTorch, (2016), GitHub repository, https://github.com/pytorch/pytorch. Accessed 13 February 2020.
 
 [3] Google Brain Team; et all, TensorFlow, (2015), GitHub repository, https://github.com/tensorflow/tensorflow. Accessed 13 February 2020.
-
